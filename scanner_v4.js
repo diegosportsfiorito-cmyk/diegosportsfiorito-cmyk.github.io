@@ -1,6 +1,6 @@
 /* ============================================================
-   SCANNER V4 PRO — IA PRO ULTRA
-   scanner_v4.js (versión final — solo 2 scanners)
+   SCANNER V4 PRO — IA PRO ULTRA (versión corregida 2026)
+   Compatible Android + iOS + PWA + ZXing local
    ============================================================ */
 
 (function () {
@@ -18,6 +18,14 @@
 
   const overlay = document.getElementById("scanner-overlay");
   const video = document.getElementById("scanner-video");
+
+  /* ============================================================
+     FIX iOS — evita fullscreen y errores de ZXing
+     ============================================================ */
+  if (video) {
+    video.setAttribute("playsinline", true);
+    video.setAttribute("webkit-playsinline", true);
+  }
 
   /* ============================================================
      BEEP
@@ -230,7 +238,7 @@
   }
 
   /* ============================================================
-     INICIAR DECODIFICACIÓN ZXING
+     DECODIFICACIÓN ZXING — FIX Android + iOS
      ============================================================ */
   async function startDecoding() {
     if (!codeReader) {
@@ -256,14 +264,13 @@
   }
 
   /* ============================================================
-     INICIAR SCANNER
+     INICIAR SCANNER (PÚBLICO)
      ============================================================ */
   async function startScanner(callback, mode) {
     if (scanning) return;
 
     endCallback = typeof callback === "function" ? callback : null;
 
-    // "simple" | "completo"
     scannerMode = mode === "completo" ? "completo" : "simple";
 
     overlay.classList.remove("hidden");
@@ -289,54 +296,40 @@
     const btnMulti = document.getElementById("scn-multi");
 
     if (btnTorch) btnTorch.onclick = toggleTorch;
-    if (btnZoomIn)
-      btnZoomIn.onclick = () => {
-        zoomLevel += 0.3;
-        applyZoom();
-      };
-    if (btnZoomOut)
-      btnZoomOut.onclick = () => {
-        zoomLevel -= 0.3;
-        applyZoom();
-      };
-    if (btnClose)
-      btnClose.onclick = () => {
-        closeScanner();
-        if (typeof endCallback === "function") {
-          endCallback(null);
-        }
-      };
+    if (btnZoomIn) btnZoomIn.onclick = () => { zoomLevel += 0.3; applyZoom(); };
+    if (btnZoomOut) btnZoomOut.onclick = () => { zoomLevel -= 0.3; applyZoom(); };
 
-    if (btnMulti)
-      btnMulti.onclick = () => {
-        if (!multiMode) {
-          multiMode = true;
-          detectedCodes = [];
-          updateControls();
+    if (btnClose) btnClose.onclick = () => {
+      closeScanner();
+      if (typeof endCallback === "function") endCallback(null);
+    };
+
+    if (btnMulti) btnMulti.onclick = () => {
+      if (!multiMode) {
+        multiMode = true;
+        detectedCodes = [];
+        updateControls();
+      } else {
+        const txt = detectedCodes.join("\n");
+        if (txt) {
+          navigator.clipboard.writeText(txt);
+          window.appCore?.showToast?.("Códigos copiados");
         } else {
-          const txt = detectedCodes.join("\n");
-          if (txt) {
-            navigator.clipboard.writeText(txt);
-            window.appCore?.showToast?.("Códigos copiados");
-          } else {
-            window.appCore?.showToast?.("No hay códigos para copiar");
-          }
+          window.appCore?.showToast?.("No hay códigos para copiar");
         }
-      };
+      }
+    };
 
     if (video) video.onclick = toggleTorch;
   }
 
   /* ============================================================
-     EXPONER SOLO 2 FUNCIONES GLOBALES
+     EXPONER FUNCIONES GLOBALES
      ============================================================ */
-
-  // Scanner interno — respeta modo SIMPLE / COMPLETO
   window.startScannerInterno1 = function (cb, mode) {
     startScanner(cb, mode === "completo" ? "completo" : "simple");
   };
 
-  // Scanner externo — modo COMPLETO (ZXing solo si se usa como fallback)
   window.startScannerExternoPreferido = function (cb) {
     startScanner(cb, "completo");
   };
