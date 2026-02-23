@@ -1,5 +1,5 @@
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v3-2026-02-23";
+const CACHE_VERSION = "stock-ia-v4-2026-02-23";
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS = [
@@ -9,7 +9,7 @@ const ASSETS = [
   "/app_core_v4.js",
   "/ui_engine_v4.js",
   "/orb_engine_v2.js",
-  "/scanner.js",
+  "/scanner_v4.js",
   "/dashboard_engine.js",
   "/indicators_engine.js",
   "/orb_admin_engine.js",
