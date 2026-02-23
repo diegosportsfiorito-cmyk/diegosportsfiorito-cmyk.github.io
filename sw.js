@@ -1,5 +1,5 @@
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v4-2026-02-23";
+const CACHE_VERSION = "stock-ia-v5-2026-02-23";
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS = [
@@ -13,7 +13,6 @@ const ASSETS = [
   "/dashboard_engine.js",
   "/indicators_engine.js",
   "/orb_admin_engine.js",
-  "/libs/zxing.js",
   "/icons/icon-192-safe.png",
   "/icons/icon-512-safe.png",
   "/icons/icon-ios.png"
@@ -21,7 +20,9 @@ const ASSETS = [
 
 // INSTALL
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
@@ -29,7 +30,11 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
+      )
     )
   );
   self.clients.claim();
