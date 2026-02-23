@@ -1,5 +1,5 @@
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v5-2026-02-23";
+const CACHE_VERSION = "stock-ia-v6-2026-02-23";
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS = [
@@ -20,9 +20,7 @@ const ASSETS = [
 
 // INSTALL
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
 
@@ -30,25 +28,33 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
-      )
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// FETCH — Stale While Revalidate
+// FETCH — Stale While Revalidate (pero excluyendo video/cámara)
 self.addEventListener("fetch", (event) => {
+  const req = event.request;
+
+  // 🚫 NO CACHEAR STREAM DE CÁMARA NI BLOB NI VIDEO
+  if (
+    req.url.startsWith("blob:") ||
+    req.destination === "video" ||
+    req.destination === "media" ||
+    req.headers.get("accept")?.includes("video")
+  ) {
+    return; // dejar pasar directo
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      const fetchPromise = fetch(event.request)
+    caches.match(req).then((cached) => {
+      const fetchPromise = fetch(req)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
+              cache.put(req, networkResponse.clone());
             });
           }
           return networkResponse;
