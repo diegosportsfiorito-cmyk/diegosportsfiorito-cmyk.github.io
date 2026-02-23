@@ -1,6 +1,5 @@
 /* ============================================================
-   SCANNER V4 PRO — IA PRO ULTRA (versión final 2026)
-   Compatible Android + iOS + PWA + ZXing (CDN)
+   SCANNER V4 PRO — IA PRO ULTRA (versión final PWA 2026)
    ============================================================ */
 
 (function () {
@@ -13,14 +12,13 @@
   let torchOn = false;
   let endCallback = null;
 
-  // MODO DEL SCANNER: "simple" | "completo"
   let scannerMode = "simple";
 
   const overlay = document.getElementById("scanner-overlay");
   const video = document.getElementById("scanner-video");
 
   /* ============================================================
-     FIX iOS — evita fullscreen y errores de ZXing
+     FIX iOS / PWA — playsinline obligatorio
      ============================================================ */
   if (video) {
     video.setAttribute("playsinline", true);
@@ -150,7 +148,7 @@
   }
 
   /* ============================================================
-     INICIAR CÁMARA
+     INICIAR CÁMARA (PWA FIX)
      ============================================================ */
   async function startCamera() {
     try {
@@ -239,7 +237,7 @@
   }
 
   /* ============================================================
-     INICIAR DECODIFICACIÓN ZXING — TODOS LOS FORMATOS
+     DECODIFICACIÓN ZXING — PRIORIDAD CODE128
      ============================================================ */
   async function startDecoding() {
     if (!codeReader) {
@@ -247,20 +245,17 @@
         [
           ZXing.DecodeHintType.POSSIBLE_FORMATS,
           [
+            ZXing.BarcodeFormat.CODE_128,
+            ZXing.BarcodeFormat.CODE_39,
             ZXing.BarcodeFormat.EAN_13,
             ZXing.BarcodeFormat.EAN_8,
             ZXing.BarcodeFormat.UPC_A,
             ZXing.BarcodeFormat.UPC_E,
-            ZXing.BarcodeFormat.CODE_128,
-            ZXing.BarcodeFormat.CODE_39,
             ZXing.BarcodeFormat.ITF,
-            ZXing.BarcodeFormat.CODABAR,
-            ZXing.BarcodeFormat.QR_CODE,
-            ZXing.BarcodeFormat.PDF_417,
-            ZXing.BarcodeFormat.AZTEC,
-            ZXing.BarcodeFormat.DATA_MATRIX
+            ZXing.BarcodeFormat.CODABAR
           ]
-        ]
+        ],
+        [ZXing.DecodeHintType.TRY_HARDER, true]
       ]);
 
       codeReader = new ZXing.BrowserMultiFormatReader(hints);
@@ -317,25 +312,13 @@
     const btnMulti = document.getElementById("scn-multi");
 
     if (btnTorch) btnTorch.onclick = toggleTorch;
-
-    if (btnZoomIn)
-      btnZoomIn.onclick = () => {
-        zoomLevel += 0.3;
-        applyZoom();
-      };
-
-    if (btnZoomOut)
-      btnZoomOut.onclick = () => {
-        zoomLevel -= 0.3;
-        applyZoom();
-      };
+    if (btnZoomIn) btnZoomIn.onclick = () => { zoomLevel += 0.3; applyZoom(); };
+    if (btnZoomOut) btnZoomOut.onclick = () => { zoomLevel -= 0.3; applyZoom(); };
 
     if (btnClose)
       btnClose.onclick = () => {
         closeScanner();
-        if (typeof endCallback === "function") {
-          endCallback(null);
-        }
+        if (typeof endCallback === "function") endCallback(null);
       };
 
     if (btnMulti)
