@@ -1,9 +1,9 @@
 /* ============================================================
    SCANNER V5 PRO — QUAGGA2 (versión final 2026)
-   Lectura industrial CODE_128 / CODE_39 / EAN / ITF / UPC
    ============================================================ */
 
-(function () {
+document.addEventListener("DOMContentLoaded", () => {
+
   let scanning = false;
   let multiMode = false;
   let detectedCodes = [];
@@ -229,4 +229,5 @@
   window.startScannerExternoPreferido = function (cb) {
     startScanner(cb, "completo");
   };
-})();
+
+});
