@@ -12,7 +12,7 @@
     <title>STOCK IA PRO — Asistente inteligente</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="styles_v2.css?v=20260220" />
+    <link rel="stylesheet" href="styles_v2.css" />
 
     <script>
       console.log(
@@ -252,9 +252,15 @@
           </aside>
         </section>
 
-        <!-- SCANNER OVERLAY -->
+        <!-- SCANNER OVERLAY (CORREGIDO) -->
         <div id="scanner-overlay" class="scanner-overlay hidden">
-          <video id="scanner-video" autoplay playsinline></video>
+          <video 
+            id="scanner-video" 
+            autoplay 
+            playsinline 
+            webkit-playsinline 
+            muted
+          ></video>
         </div>
 
         <!-- FUENTE DE DATOS -->
@@ -367,17 +373,18 @@
 
     <div id="toast" class="toast"></div>
 
-    <!-- SCRIPTS -->
+    <!-- SCRIPTS ORDENADOS Y CORREGIDOS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/libs/zxing.js"></script>
 
-    <script src="scanner_v4.js?v=20260220"></script>
-    <script src="app_core_v4.js?v=20260220"></script>
-    <script src="ui_engine_v4.js?v=20260220"></script>
-    <script src="orb_engine_v2.js?v=20260220"></script>
-    <script src="orb_admin_engine.js?v=20260220"></script>
-    <script src="dashboard_engine.js?v=20260220"></script>
-    <script src="indicators_engine.js?v=20260220"></script>
+    <script src="app_core_v4.js"></script>
+    <script src="ui_engine_v4.js"></script>
+    <script src="orb_engine_v2.js"></script>
+    <script src="orb_admin_engine.js"></script>
+    <script src="dashboard_engine.js"></script>
+    <script src="indicators_engine.js"></script>
+
+    <script src="scanner_v4.js"></script>
 
     <script>
       window.addEventListener("DOMContentLoaded", () => {
