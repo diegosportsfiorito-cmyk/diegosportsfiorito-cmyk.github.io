@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="build-version" content="2026-02-20_UI-V4_FINAL" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
     <title>STOCK IA PRO — Asistente inteligente</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -70,7 +76,7 @@
             </div>
           </div>
 
-          <!-- SCANNER BUTTONS (2 ICONOS ORIGINALES) -->
+          <!-- SCANNER BUTTONS -->
           <div class="scanner-buttons">
             <button id="btn-scanner-interno-1" class="scanner-button">📷</button>
             <button id="btn-scanner-externo-preferido" class="scanner-button">📲</button>
@@ -186,7 +192,6 @@
               <input id="filtro-talle-hasta" type="number" class="filtro-input" placeholder="Talle hasta" />
             </div>
 
-            <!-- NUEVO FILTRO DE UNIDADES -->
             <div class="filtros-row filtros-row-stack">
               <input id="filtro-unidades-desde" type="number" class="filtro-input" placeholder="Unidades desde" />
               <input id="filtro-unidades-hasta" type="number" class="filtro-input" placeholder="Unidades hasta" />
@@ -246,6 +251,7 @@
             <canvas id="stockChart"></canvas>
           </aside>
         </section>
+
         <!-- SCANNER OVERLAY -->
         <div id="scanner-overlay" class="scanner-overlay hidden">
           <video id="scanner-video" autoplay playsinline></video>
@@ -399,5 +405,16 @@
         }
       };
     </script>
+
+    <!-- SERVICE WORKER -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then(() => console.log("Service Worker registrado"))
+          .catch(err => console.warn("Error registrando SW:", err));
+      }
+    </script>
+
   </body>
 </html>
