@@ -1,5 +1,5 @@
-// Cambiá este valor en cada release para forzar actualización
-const CACHE_VERSION = "stock-ia-v2-2026-02-23";
+// Cambiá este valor en cada release
+const CACHE_VERSION = "stock-ia-v3-2026-02-23";
 const CACHE_NAME = CACHE_VERSION;
 
 const ASSETS = [
@@ -9,39 +9,36 @@ const ASSETS = [
   "/app_core_v4.js",
   "/ui_engine_v4.js",
   "/orb_engine_v2.js",
-  "/scanner_v4.js",
+  "/scanner.js",
   "/dashboard_engine.js",
   "/indicators_engine.js",
   "/orb_admin_engine.js",
+  "/libs/zxing.js",
   "/icons/icon-192-safe.png",
   "/icons/icon-512-safe.png",
   "/icons/icon-ios.png"
 ];
 
-// INSTALL — precachea todo
+// INSTALL
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-// ACTIVATE — limpia versiones viejas
+// ACTIVATE
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      )
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-// FETCH — Stale-While-Revalidate
+// FETCH — Stale While Revalidate
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
+    caches.match(event.request).then((cached) => {
       const fetchPromise = fetch(event.request)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
@@ -51,9 +48,9 @@ self.addEventListener("fetch", (event) => {
           }
           return networkResponse;
         })
-        .catch(() => cachedResponse);
+        .catch(() => cached);
 
-      return cachedResponse || fetchPromise;
+      return cached || fetchPromise;
     })
   );
 });
