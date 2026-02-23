@@ -6,7 +6,11 @@
     <title>STOCK IA PRO — Asistente inteligente</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- ESTILOS PRINCIPALES -->
     <link rel="stylesheet" href="styles_v2.css?v=20260220" />
+
+    <!-- ESTILO AISLADO DEL SCANNER -->
+    <link rel="stylesheet" href="scanner.css?v=20260223" />
 
     <script>
       console.log(
@@ -70,13 +74,13 @@
             </div>
           </div>
 
-          <!-- SCANNER BUTTONS -->
+          <!-- BOTONES DEL SCANNER -->
           <div class="scanner-buttons">
             <button id="btn-scanner-interno-1" class="scanner-button">📷</button>
             <button id="btn-scanner-externo-preferido" class="scanner-button">📲</button>
           </div>
 
-          <!-- SCANNER MODE -->
+          <!-- MODO SCANNER -->
           <div class="scanner-mode-switch">
             <label class="orb-mode-switch">
               <span>Simple</span>
@@ -171,47 +175,47 @@
 
           <!-- PANEL DE FILTROS -->
           <div id="filtros-panel" class="filtros-panel">
-            <!-- ... (todo igual) ... -->
+            <!-- contenido igual -->
           </div>
         </section>
 
         <!-- MAIN ROW -->
         <section class="main-row">
-          <!-- ... (todo igual) ... -->
+          <!-- contenido igual -->
         </section>
 
-        <!-- SCANNER OVERLAY -->
-        <div id="scanner-overlay" class="scanner-overlay hidden">
+        <!-- SCANNER OVERLAY (AISLADO) -->
+        <div id="scanner-overlay" class="hidden">
           <video id="scanner-video" autoplay playsinline></video>
         </div>
 
         <!-- FUENTE DE DATOS -->
-        <!-- ... (todo igual) ... -->
+        <!-- contenido igual -->
 
         <!-- FOOTER -->
-        <!-- ... (todo igual) ... -->
+        <!-- contenido igual -->
 
       </div>
     </div>
 
     <!-- PANEL ADMIN -->
-    <!-- ... (todo igual) ... -->
+    <!-- contenido igual -->
 
     <!-- MODAL DE AYUDA -->
-    <!-- ... (todo igual) ... -->
+    <!-- contenido igual -->
 
     <div id="toast" class="toast"></div>
 
-    <!-- SCRIPTS -->
+    <!-- LIBRERÍAS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- QUAGGA2 (nuevo) -->
+    <!-- QUAGGA2 -->
     <script src="https://cdn.jsdelivr.net/npm/quagga2@1.2.6/dist/quagga.min.js"></script>
 
     <!-- SCANNER NUEVO -->
     <script src="scanner_v5_quagga.js?v=20260223"></script>
 
-    <!-- RESTO DE TU APP -->
+    <!-- RESTO DE LA APP -->
     <script src="app_core_v4.js?v=20260220"></script>
     <script src="ui_engine_v4.js?v=20260220"></script>
     <script src="orb_engine_v2.js?v=20260220"></script>
