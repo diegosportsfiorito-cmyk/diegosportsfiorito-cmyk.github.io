@@ -1,6 +1,6 @@
 /* ============================================================
    SCANNER V4 PRO — IA PRO ULTRA (versión corregida 2026)
-   Compatible Android + iOS + PWA + ZXing local
+   Compatible Android + iOS + PWA + ZXing (CDN)
    ============================================================ */
 
 (function () {
@@ -25,6 +25,7 @@
   if (video) {
     video.setAttribute("playsinline", true);
     video.setAttribute("webkit-playsinline", true);
+    video.setAttribute("muted", true);
   }
 
   /* ============================================================
@@ -236,13 +237,33 @@
       updateControls();
     }
   }
-
   /* ============================================================
-     DECODIFICACIÓN ZXING — FIX Android + iOS
+     INICIAR DECODIFICACIÓN ZXING — TODOS LOS FORMATOS ACTIVADOS
      ============================================================ */
   async function startDecoding() {
     if (!codeReader) {
-      codeReader = new ZXing.BrowserMultiFormatReader();
+      // Hints: activar TODOS los formatos útiles
+      const hints = new Map([
+        [
+          ZXing.DecodeHintType.POSSIBLE_FORMATS,
+          [
+            ZXing.BarcodeFormat.EAN_13,
+            ZXing.BarcodeFormat.EAN_8,
+            ZXing.BarcodeFormat.UPC_A,
+            ZXing.BarcodeFormat.UPC_E,
+            ZXing.BarcodeFormat.CODE_128,
+            ZXing.BarcodeFormat.CODE_39,
+            ZXing.BarcodeFormat.ITF,
+            ZXing.BarcodeFormat.CODABAR,
+            ZXing.BarcodeFormat.QR_CODE,
+            ZXing.BarcodeFormat.PDF_417,
+            ZXing.BarcodeFormat.AZTEC,
+            ZXing.BarcodeFormat.DATA_MATRIX
+          ]
+        ]
+      ]);
+
+      codeReader = new ZXing.BrowserMultiFormatReader(hints);
     }
 
     scanning = true;
@@ -264,13 +285,14 @@
   }
 
   /* ============================================================
-     INICIAR SCANNER (PÚBLICO)
+     INICIAR SCANNER
      ============================================================ */
   async function startScanner(callback, mode) {
     if (scanning) return;
 
     endCallback = typeof callback === "function" ? callback : null;
 
+    // "simple" | "completo"
     scannerMode = mode === "completo" ? "completo" : "simple";
 
     overlay.classList.remove("hidden");
@@ -296,40 +318,57 @@
     const btnMulti = document.getElementById("scn-multi");
 
     if (btnTorch) btnTorch.onclick = toggleTorch;
-    if (btnZoomIn) btnZoomIn.onclick = () => { zoomLevel += 0.3; applyZoom(); };
-    if (btnZoomOut) btnZoomOut.onclick = () => { zoomLevel -= 0.3; applyZoom(); };
 
-    if (btnClose) btnClose.onclick = () => {
-      closeScanner();
-      if (typeof endCallback === "function") endCallback(null);
-    };
+    if (btnZoomIn)
+      btnZoomIn.onclick = () => {
+        zoomLevel += 0.3;
+        applyZoom();
+      };
 
-    if (btnMulti) btnMulti.onclick = () => {
-      if (!multiMode) {
-        multiMode = true;
-        detectedCodes = [];
-        updateControls();
-      } else {
-        const txt = detectedCodes.join("\n");
-        if (txt) {
-          navigator.clipboard.writeText(txt);
-          window.appCore?.showToast?.("Códigos copiados");
-        } else {
-          window.appCore?.showToast?.("No hay códigos para copiar");
+    if (btnZoomOut)
+      btnZoomOut.onclick = () => {
+        zoomLevel -= 0.3;
+        applyZoom();
+      };
+
+    if (btnClose)
+      btnClose.onclick = () => {
+        closeScanner();
+        if (typeof endCallback === "function") {
+          endCallback(null);
         }
-      }
-    };
+      };
+
+    if (btnMulti)
+      btnMulti.onclick = () => {
+        if (!multiMode) {
+          multiMode = true;
+          detectedCodes = [];
+          updateControls();
+        } else {
+          const txt = detectedCodes.join("\n");
+          if (txt) {
+            navigator.clipboard.writeText(txt);
+            window.appCore?.showToast?.("Códigos copiados");
+          } else {
+            window.appCore?.showToast?.("No hay códigos para copiar");
+          }
+        }
+      };
 
     if (video) video.onclick = toggleTorch;
   }
 
   /* ============================================================
-     EXPONER FUNCIONES GLOBALES
+     EXPONER SOLO 2 FUNCIONES GLOBALES
      ============================================================ */
+
+  // Scanner interno — respeta modo SIMPLE / COMPLETO
   window.startScannerInterno1 = function (cb, mode) {
     startScanner(cb, mode === "completo" ? "completo" : "simple");
   };
 
+  // Scanner externo — modo COMPLETO
   window.startScannerExternoPreferido = function (cb) {
     startScanner(cb, "completo");
   };
