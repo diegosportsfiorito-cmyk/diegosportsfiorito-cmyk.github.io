@@ -1,9 +1,10 @@
 {
   "name": "STOCK IA PRO",
-  "short_name": "Stock IA",
+  "short_name": "IA PRO",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
   "theme_color": "#000000",
   "description": "Asistente inteligente de stock con scanner, dictado y dashboard.",
