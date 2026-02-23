@@ -1,5 +1,5 @@
 /* ============================================================
-   SCANNER V4 PRO — IA PRO ULTRA (versión corregida 2026)
+   SCANNER V4 PRO — IA PRO ULTRA (versión final 2026)
    Compatible Android + iOS + PWA + ZXing (CDN)
    ============================================================ */
 
@@ -237,12 +237,12 @@
       updateControls();
     }
   }
+
   /* ============================================================
-     INICIAR DECODIFICACIÓN ZXING — TODOS LOS FORMATOS ACTIVADOS
+     INICIAR DECODIFICACIÓN ZXING — TODOS LOS FORMATOS
      ============================================================ */
   async function startDecoding() {
     if (!codeReader) {
-      // Hints: activar TODOS los formatos útiles
       const hints = new Map([
         [
           ZXing.DecodeHintType.POSSIBLE_FORMATS,
@@ -292,7 +292,6 @@
 
     endCallback = typeof callback === "function" ? callback : null;
 
-    // "simple" | "completo"
     scannerMode = mode === "completo" ? "completo" : "simple";
 
     overlay.classList.remove("hidden");
@@ -360,15 +359,12 @@
   }
 
   /* ============================================================
-     EXPONER SOLO 2 FUNCIONES GLOBALES
+     EXPONER FUNCIONES GLOBALES
      ============================================================ */
-
-  // Scanner interno — respeta modo SIMPLE / COMPLETO
   window.startScannerInterno1 = function (cb, mode) {
     startScanner(cb, mode === "completo" ? "completo" : "simple");
   };
 
-  // Scanner externo — modo COMPLETO
   window.startScannerExternoPreferido = function (cb) {
     startScanner(cb, "completo");
   };
