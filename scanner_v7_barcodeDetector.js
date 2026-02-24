@@ -1,5 +1,5 @@
 /* ============================================================
-   SCANNER V7 — BarcodeDetector nativo + UX pulida
+   SCANNER V7 — BarcodeDetector nativo + Autofocus + AutoExposure
    ============================================================ */
 
 (function () {
@@ -81,8 +81,8 @@
     const track = getVideoTrack();
     if (!track) return;
 
-    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-    if (!capabilities.torch) {
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (!caps.torch) {
       window.appCore?.showToast?.("Linterna no disponible");
       return;
     }
@@ -102,13 +102,13 @@
     const track = getVideoTrack();
     if (!track) return;
 
-    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
-    if (!capabilities.zoom) {
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (!caps.zoom) {
       window.appCore?.showToast?.("Zoom no soportado");
       return;
     }
 
-    maxZoom = capabilities.zoom.max || 1;
+    maxZoom = caps.zoom.max || 1;
     zoomLevel = Math.max(1, Math.min(zoomLevel, maxZoom));
 
     try {
@@ -120,12 +120,17 @@
     }
   }
 
+  /* ============================================================
+     TAP-TO-FOCUS (si el dispositivo lo soporta)
+     ============================================================ */
   async function tapToFocus(normX, normY) {
     const track = getVideoTrack();
     if (!track || !track.getCapabilities) return;
 
-    const capabilities = track.getCapabilities();
-    if (!capabilities.focusMode || !capabilities.focusPointX || !capabilities.focusPointY) {
+    const caps = track.getCapabilities();
+
+    if (!caps.focusMode || !caps.focusPointX || !caps.focusPointY) {
+      console.warn("Tap-to-focus no soportado");
       return;
     }
 
@@ -135,12 +140,62 @@
           {
             focusMode: "manual",
             focusPointX: normX,
-            focusPointY: normY,
-          },
-        ],
+            focusPointY: normY
+          }
+        ]
       });
+
+      console.log("Tap-to-focus aplicado:", normX, normY);
+
+      // Volver a continuous-focus después de 1.2s
+      setTimeout(() => {
+        track.applyConstraints({
+          advanced: [{ focusMode: "continuous" }]
+        });
+      }, 1200);
+
     } catch (e) {
-      console.warn("No se pudo aplicar enfoque manual:", e);
+      console.warn("Error aplicando tap-to-focus:", e);
+    }
+  }
+
+  /* ============================================================
+     AUTOFOCUS + AUTOEXPOSURE LOOP
+     ============================================================ */
+  async function autoFocusExposureLoop() {
+    const track = getVideoTrack();
+    if (!track || !track.getCapabilities) return;
+
+    const caps = track.getCapabilities();
+
+    const constraints = { advanced: [] };
+
+    // Autofocus continuo
+    if (caps.focusMode && caps.focusMode.includes("continuous")) {
+      constraints.advanced.push({ focusMode: "continuous" });
+    }
+
+    // Auto-exposure continuo
+    if (caps.exposureMode && caps.exposureMode.includes("continuous")) {
+      constraints.advanced.push({ exposureMode: "continuous" });
+    }
+
+    // Ajuste fino de exposición si está disponible
+    if (caps.exposureCompensation) {
+      const mid = (caps.exposureCompensation.min + caps.exposureCompensation.max) / 2;
+      constraints.advanced.push({ exposureCompensation: mid });
+    }
+
+    try {
+      if (constraints.advanced.length > 0) {
+        await track.applyConstraints(constraints);
+      }
+    } catch (e) {
+      console.warn("AutoFocus/Exposure error:", e);
+    }
+
+    if (scanning) {
+      setTimeout(autoFocusExposureLoop, 2500);
     }
   }
 
@@ -152,6 +207,7 @@
           width: { ideal: 1280 },
           height: { ideal: 720 },
           focusMode: "continuous",
+          exposureMode: "continuous"
         },
         audio: false,
       });
@@ -274,6 +330,9 @@
 
     const ok = await startCamera();
     if (!ok) return;
+
+    // Activar autofocus + autoexposure
+    autoFocusExposureLoop();
 
     startDecoding();
 
