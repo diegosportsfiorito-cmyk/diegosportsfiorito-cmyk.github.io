@@ -67,15 +67,19 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 
-  /* Fondo con imagen + overlay de profundidad */
+  /* Fondo con profundidad + imagen */
   background:
-    radial-gradient(circle at top, rgba(15, 23, 42, 0.9) 0, #020617 45%, #000 100%),
-    url("fondo-chip.jpg") center center / cover fixed no-repeat;
+    linear-gradient(
+      rgba(0, 0, 0, 0.75),
+      rgba(0, 0, 0, 0.85)
+    ),
+    url("/img/bg-chip.jpg") center center / cover fixed no-repeat;
 
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+
 
 /* ============================================================
    04 — MODO DÍA
