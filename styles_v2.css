@@ -109,20 +109,17 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   05 — MOBILE (IA PRO ULTRA CON FONDO IMAGEN)
+   05 — PLASMA MOBILE (IA PRO ULTRA)
    ============================================================ */
 
 @media (max-width: 600px) {
   body {
     background:
-      linear-gradient(
-        rgba(0, 0, 0, 0.78),
-        rgba(0, 0, 0, 0.9)
-      ),
-      url("/img/bg-chip.jpg") center center / cover no-repeat;
+      radial-gradient(circle at 0% 0%, #1d4ed8 0, transparent 45%),
+      radial-gradient(circle at 100% 0%, #22c55e 0, transparent 45%),
+      radial-gradient(circle at 50% 100%, #0ea5e9 0, #020617 55%);
   }
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 2
    LAYOUT + HEADER
@@ -143,6 +140,7 @@ body.light-mode .result-sub {
 .app-container {
   width: 100%;
   max-width: 1100px;
+  background: radial-gradient(circle at top left, #020617 0%, #020617 40%, #020617 100%);
 
   /* Dejar ver el fondo + dar sensación de panel principal */
   background: radial-gradient(circle at top left,
@@ -154,12 +152,7 @@ body.light-mode .result-sub {
   border-radius: 26px;
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
-  padding: 18px 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  position: relative;
-  overflow: hidden;
+@@ -153,1732 +160,1733 @@
   z-index: 1;
 }
 
@@ -295,6 +288,190 @@ body.light-mode .result-sub {
   }
 }
 /* ============================================================
+   IA PRO ULTRA V5 — BLOQUE 3
+   SEARCH + AUTOCOMPLETE + ACCIONES + VOZ + SWITCHES
+   ============================================================ */
+
+/* ============================================================
+   10 — SEARCH CARD
+   ============================================================ */
+
+.search-card {
+  background: var(--card-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  backdrop-filter: blur(18px);
+}
+
+.search-status {
+  margin-bottom: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: left;
+  color: #0ea5e9;
+}
+
+.search-status.orange { color: #f59e0b; }
+.search-status.green { color: #10b981; }
+.search-status.red { color: #ef4444; }
+.search-status.blue { color: #0ea5e9; }
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.6);
+  background: rgba(15, 23, 42, 0.98);
+}
+
+/* ============================================================
+   11 — AUTOCOMPLETE
+   ============================================================ */
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.97);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+  border-radius: var(--radius-md);
+  z-index: 9999;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+}
+
+.autocomplete-list li {
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.7);
+}
+
+.autocomplete-list li:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-list li:hover {
+  background: rgba(79, 140, 255, 0.2);
+}
+
+/* ============================================================
+   12 — ACCIONES DE BÚSQUEDA
+   ============================================================ */
+
+.search-actions-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.orb-action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: radial-gradient(circle at 30% 20%, #020617, #020617);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.orb-action-btn:hover {
+  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
+  border-color: rgba(129, 140, 248, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
+}
+
+.orb-action-btn.stop {
+  background: #ffffff !important;
+  color: #c62828 !important;
+  border: 1px solid #c62828 !important;
+}
+/* ============================================================
+   13 — VOZ
+   ============================================================ */
+
+.voice-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.mic-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast),
+    transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.mic-btn:hover {
+  background: radial-gradient(circle at 30% 20%, #3b82f6, #020617);
+  border-color: rgba(129, 140, 248, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.95);
+}
+
+.voice-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.voice-status.listening {
+  color: #22c55e;
+}
+
+/* ============================================================
    14 — SWITCHES
    ============================================================ */
 
@@ -396,7 +573,6 @@ input:checked + .slider:before {
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 4
    ORB COMPLETO (ULTRA, 3D, CLASSIC, ESTADOS, ANIMACIONES)
@@ -558,7 +734,6 @@ body.light-mode #orb-core.orb-error {
 body.light-mode #orb-core.orb-listening {
   background: radial-gradient(circle at 30% 20%, #22c55e, #15803d);
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 5
    MÉTRICAS + RESULTADOS + TABLA + TARJETAS + ARTÍCULO
@@ -819,7 +994,6 @@ body.light-mode #orb-core.orb-listening {
   background: #111827;
   font-weight: bold;
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 6
    DASHBOARD PRO COMPLETO
@@ -956,7 +1130,6 @@ body.light-mode #orb-core.orb-listening {
     text-align: center;
   }
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 7
    PANEL ADMINISTRADOR PRO V4
@@ -1158,7 +1331,6 @@ body.light-mode #orb-core.orb-listening {
     font-size: 0.82rem;
   }
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 8
    SCANNER V4 PRO (NUEVO, LIMPIO, OPTIMIZADO)
@@ -1223,6 +1395,7 @@ body.scanner-active {
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
   z-index: 9999999;
 }
+
 /* ============================================================
    42 — BOTONES DEL SCANNER
    ============================================================ */
@@ -1363,7 +1536,6 @@ body.light-mode .scanner-counter {
     font-size: 0.8rem;
   }
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 9
    HELP MODAL
@@ -1431,10 +1603,13 @@ body.light-mode .scanner-counter {
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 10
    FUENTE DE DATOS + FILTROS PANEL
+   ============================================================ */
+
+/* ============================================================
+   46 — FUENTE DE DATOS
    ============================================================ */
 
 .fuente-datos-wrapper {
@@ -1499,7 +1674,6 @@ body.light-mode .scanner-counter {
   color: #e5e7eb;
   font-size: 0.8rem;
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 11
    FOOTER
@@ -1544,18 +1718,24 @@ body.light-mode .scanner-counter {
   opacity: 1;
   font-weight: bold;
 }
-
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 12
    RESPONSIVE UNIFICADO (MOBILE + TABLET)
    ============================================================ */
 
+/* ============================================================
+   12.1 — TABLET (≤ 900px)
+   ============================================================ */
+
 @media (max-width: 900px) {
+
+  /* Main layout */
   .main-row {
     flex-direction: column;
     gap: 16px;
   }
 
+  /* Dashboard */
   .dashboard-card {
     width: 100%;
     min-width: unset;
@@ -1567,8 +1747,13 @@ body.light-mode .scanner-counter {
   }
 }
 
+/* ============================================================
+   12.2 — MOBILE (≤ 600px)
+   ============================================================ */
+
 @media (max-width: 600px) {
 
+  /* Body en mobile: mismo fondo con profundidad */
   body {
     overflow-x: auto !important;
     background:
@@ -1579,11 +1764,13 @@ body.light-mode .scanner-counter {
       url("/img/bg-chip.jpg") center center / cover no-repeat;
   }
 
+  /* App container */
   .app-container {
     padding: 12px !important;
     border-radius: 18px;
   }
 
+  /* Search + Results + Dashboard con glass real */
   .search-card,
   .results-card,
   .dashboard-card {
@@ -1593,15 +1780,18 @@ body.light-mode .scanner-counter {
     margin: 0 !important;
   }
 
+   /* Results */
   .results-card {
     max-height: unset !important;
     overflow-y: visible !important;
   }
 
+  /* Result items */
   .result-item {
     padding: 10px !important;
   }
 
+  /* Table */
   .tabla-wrapper {
     overflow-x: auto !important;
   }
@@ -1610,6 +1800,7 @@ body.light-mode .scanner-counter {
     min-width: 600px !important;
   }
 
+  /* Metrics */
   .metrics-row {
     display: flex;
     flex-wrap: wrap;
@@ -1620,11 +1811,13 @@ body.light-mode .scanner-counter {
     flex: 0 0 calc(50% - 8px);
   }
 
+  /* ORB */
   #orb-core {
     width: var(--orb-size-mobile);
     height: var(--orb-size-mobile);
   }
 
+  /* Dashboard */
   #stockChart {
     height: 200px !important;
   }
@@ -1634,6 +1827,7 @@ body.light-mode .scanner-counter {
     text-align: center;
   }
 
+  /* Admin panel */
   #admin-panel {
     width: 92%;
     padding: 16px;
@@ -1648,6 +1842,7 @@ body.light-mode .scanner-counter {
     font-size: 0.82rem;
   }
 
+  /* Scanner */
   #scanner-video {
     max-width: 360px;
   }
