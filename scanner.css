@@ -99,3 +99,78 @@
   border-radius: 50% !important;
   padding: 0 !important;
 }
+/* Zona de escaneo central */
+#scan-frame {
+  position: absolute;
+  width: 70vw;
+  max-width: 420px;
+  aspect-ratio: 3 / 1;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1000002;
+}
+
+/* Líneas guía en los bordes del cuadro */
+#scan-frame::before,
+#scan-frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    #4f8cff 20%,
+    #4f8cff 80%,
+    transparent 100%
+  );
+}
+
+#scan-frame::before {
+  top: 20%;
+}
+
+#scan-frame::after {
+  bottom: 20%;
+}
+
+/* Láser de búsqueda */
+#scan-laser {
+  position: absolute;
+  left: 50%;
+  width: 60%;
+  max-width: 360px;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    #ff4f4f 20%,
+    #ff4f4f 80%,
+    transparent 100%
+  );
+  transform: translateX(-50%);
+  top: 50%;
+  opacity: 0.9;
+  box-shadow: 0 0 12px rgba(255, 79, 79, 0.8);
+  animation: scan-laser-move 1.6s linear infinite;
+  pointer-events: none;
+  z-index: 1000003;
+}
+
+@keyframes scan-laser-move {
+  0% {
+    transform: translate(-50%, -140%);
+  }
+  50% {
+    transform: translate(-50%, 40%);
+  }
+  100% {
+    transform: translate(-50%, -140%);
+  }
+}
