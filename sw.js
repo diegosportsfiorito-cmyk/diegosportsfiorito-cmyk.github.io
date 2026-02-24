@@ -1,15 +1,14 @@
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v6-2026-02-23";
+const CACHE_VERSION = "stock-ia-v7-2026-02-23";
 const CACHE_NAME = CACHE_VERSION;
 
+// Archivos estáticos REALES que sí existen
 const ASSETS = [
-  "/",
-  "/index.html",
   "/styles_v2.css",
+  "/scanner.css",
   "/app_core_v4.js",
   "/ui_engine_v4.js",
   "/orb_engine_v2.js",
-  "/scanner_v4.js",
   "/dashboard_engine.js",
   "/indicators_engine.js",
   "/orb_admin_engine.js",
@@ -20,7 +19,9 @@ const ASSETS = [
 
 // INSTALL
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
@@ -34,24 +35,41 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// FETCH — Stale While Revalidate (pero excluyendo video/cámara)
+// FETCH — Cache First para assets, Network First para HTML y JS dinámicos
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
-  // 🚫 NO CACHEAR STREAM DE CÁMARA NI BLOB NI VIDEO
+  // Nunca cachear cámara/video
   if (
     req.url.startsWith("blob:") ||
     req.destination === "video" ||
-    req.destination === "media" ||
-    req.headers.get("accept")?.includes("video")
+    req.destination === "media"
   ) {
-    return; // dejar pasar directo
+    return;
   }
 
+  // HTML SIEMPRE desde la red (para evitar versiones viejas)
+  if (req.destination === "document") {
+    event.respondWith(
+      fetch(req).catch(() => caches.match("/index.html"))
+    );
+    return;
+  }
+
+  // JS dinámico SIEMPRE desde la red
+  if (req.destination === "script") {
+    event.respondWith(
+      fetch(req).catch(() => caches.match(req))
+    );
+    return;
+  }
+
+  // Assets estáticos → Cache First
   event.respondWith(
     caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req)
-        .then((networkResponse) => {
+      return (
+        cached ||
+        fetch(req).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(req, networkResponse.clone());
@@ -59,9 +77,7 @@ self.addEventListener("fetch", (event) => {
           }
           return networkResponse;
         })
-        .catch(() => cached);
-
-      return cached || fetchPromise;
+      );
     })
   );
 });
