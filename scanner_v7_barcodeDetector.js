@@ -1,5 +1,5 @@
 /* ============================================================
-   SCANNER V6 — BarcodeDetector nativo
+   SCANNER V7 — BarcodeDetector nativo + UX pulida
    ============================================================ */
 
 (function () {
@@ -117,6 +117,30 @@
       });
     } catch (e) {
       console.warn("Zoom error:", e);
+    }
+  }
+
+  async function tapToFocus(normX, normY) {
+    const track = getVideoTrack();
+    if (!track || !track.getCapabilities) return;
+
+    const capabilities = track.getCapabilities();
+    if (!capabilities.focusMode || !capabilities.focusPointX || !capabilities.focusPointY) {
+      return;
+    }
+
+    try {
+      await track.applyConstraints({
+        advanced: [
+          {
+            focusMode: "manual",
+            focusPointX: normX,
+            focusPointY: normY,
+          },
+        ],
+      });
+    } catch (e) {
+      console.warn("No se pudo aplicar enfoque manual:", e);
     }
   }
 
@@ -295,7 +319,14 @@
         }
       };
 
-    if (video) video.onclick = toggleTorch;
+    if (video) {
+      video.onclick = (ev) => {
+        const rect = video.getBoundingClientRect();
+        const x = (ev.clientX - rect.left) / rect.width;
+        const y = (ev.clientY - rect.top) / rect.height;
+        tapToFocus(x, y);
+      };
+    }
   }
 
   window.startScannerInterno1 = function (cb, mode) {
