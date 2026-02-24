@@ -1,5 +1,6 @@
 /* ============================================================
-   SCANNER V7 — BarcodeDetector nativo + Autofocus + AutoExposure
+   SCANNER V7 — BarcodeDetector + Autofocus + AutoExposure
+   + Overlay + Motion Refocus + Fast CODE_128
    ============================================================ */
 
 (function () {
@@ -12,8 +13,14 @@
   let endCallback = null;
   let scannerMode = "simple";
 
+  let lastFrameData = null;
+  let lastMotionTime = 0;
+  const MOTION_THRESHOLD = 18;
+  const MOTION_REFOCUS_INTERVAL = 1200;
+
   const overlay = document.getElementById("scanner-overlay");
   const video = document.getElementById("scanner-video");
+  const focusRing = document.getElementById("focus-ring");
 
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
@@ -121,9 +128,9 @@
   }
 
   /* ============================================================
-     TAP-TO-FOCUS (si el dispositivo lo soporta)
+     TAP-TO-FOCUS + ANIMACIÓN
      ============================================================ */
-  async function tapToFocus(normX, normY) {
+  async function tapToFocus(normX, normY, px, py) {
     const track = getVideoTrack();
     if (!track || !track.getCapabilities) return;
 
@@ -132,6 +139,18 @@
     if (!caps.focusMode || !caps.focusPointX || !caps.focusPointY) {
       console.warn("Tap-to-focus no soportado");
       return;
+    }
+
+    if (focusRing) {
+      focusRing.style.left = `${px}px`;
+      focusRing.style.top = `${py}px`;
+      focusRing.style.opacity = "1";
+      focusRing.style.transform = "translate(-50%, -50%) scale(1.2)";
+
+      setTimeout(() => {
+        focusRing.style.opacity = "0";
+        focusRing.style.transform = "translate(-50%, -50%) scale(1)";
+      }, 300);
     }
 
     try {
@@ -145,9 +164,6 @@
         ]
       });
 
-      console.log("Tap-to-focus aplicado:", normX, normY);
-
-      // Volver a continuous-focus después de 1.2s
       setTimeout(() => {
         track.applyConstraints({
           advanced: [{ focusMode: "continuous" }]
@@ -167,20 +183,16 @@
     if (!track || !track.getCapabilities) return;
 
     const caps = track.getCapabilities();
-
     const constraints = { advanced: [] };
 
-    // Autofocus continuo
     if (caps.focusMode && caps.focusMode.includes("continuous")) {
       constraints.advanced.push({ focusMode: "continuous" });
     }
 
-    // Auto-exposure continuo
     if (caps.exposureMode && caps.exposureMode.includes("continuous")) {
       constraints.advanced.push({ exposureMode: "continuous" });
     }
 
-    // Ajuste fino de exposición si está disponible
     if (caps.exposureCompensation) {
       const mid = (caps.exposureCompensation.min + caps.exposureCompensation.max) / 2;
       constraints.advanced.push({ exposureCompensation: mid });
@@ -195,7 +207,7 @@
     }
 
     if (scanning) {
-      setTimeout(autoFocusExposureLoop, 2500);
+      setTimeout(autoFocusExposureLoop, 2200);
     }
   }
 
@@ -235,6 +247,8 @@
     detectedCodes = [];
     torchOn = false;
     zoomLevel = 1;
+    lastFrameData = null;
+    lastMotionTime = 0;
 
     stopCamera();
     overlay.classList.add("hidden");
@@ -295,10 +309,49 @@
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+      // --- DETECCIÓN DE MOVIMIENTO PARA RE-ENFOQUE ---
+      try {
+        const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        if (lastFrameData) {
+          let diff = 0;
+          const step = 16;
+          for (let i = 0; i < frame.data.length; i += 4 * step) {
+            const d =
+              Math.abs(frame.data[i] - lastFrameData.data[i]) +
+              Math.abs(frame.data[i + 1] - lastFrameData.data[i + 1]) +
+              Math.abs(frame.data[i + 2] - lastFrameData.data[i + 2]);
+            diff += d;
+          }
+          const avgDiff = diff / (frame.data.length / (4 * step));
+
+          const now = Date.now();
+          if (
+            avgDiff > MOTION_THRESHOLD &&
+            now - lastMotionTime > MOTION_REFOCUS_INTERVAL
+          ) {
+            lastMotionTime = now;
+            autoFocusExposureLoop();
+          }
+        }
+        lastFrameData = frame;
+      } catch (e) {
+        // no romper si algo falla
+      }
+
       try {
         const barcodes = await detector.detect(canvas);
         if (barcodes && barcodes.length > 0) {
-          const best = barcodes[0];
+          // Priorizar CODE_128 si está presente
+          let best = barcodes[0];
+
+          for (const b of barcodes) {
+            const fmt = (b.format || b.formatName || "").toLowerCase();
+            if (fmt.includes("code_128")) {
+              best = b;
+              break;
+            }
+          }
+
           if (best.rawValue) {
             handleDetected(best.rawValue);
           }
@@ -331,9 +384,7 @@
     const ok = await startCamera();
     if (!ok) return;
 
-    // Activar autofocus + autoexposure
     autoFocusExposureLoop();
-
     startDecoding();
 
     const btnTorch = document.getElementById("scn-torch");
@@ -383,7 +434,7 @@
         const rect = video.getBoundingClientRect();
         const x = (ev.clientX - rect.left) / rect.width;
         const y = (ev.clientY - rect.top) / rect.height;
-        tapToFocus(x, y);
+        tapToFocus(x, y, ev.clientX, ev.clientY);
       };
     }
   }
