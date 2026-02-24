@@ -8,7 +8,6 @@
 
     <!-- ESTILOS PRINCIPALES -->
     <link rel="stylesheet" href="styles_v2.css?v=20260220" />
-
     <!-- ESTILO AISLADO DEL SCANNER -->
     <link rel="stylesheet" href="scanner.css?v=20260223" />
 
@@ -74,13 +73,13 @@
             </div>
           </div>
 
-          <!-- BOTONES DEL SCANNER -->
+          <!-- SCANNER BUTTONS (2 ICONOS ORIGINALES) -->
           <div class="scanner-buttons">
             <button id="btn-scanner-interno-1" class="scanner-button">📷</button>
             <button id="btn-scanner-externo-preferido" class="scanner-button">📲</button>
           </div>
 
-          <!-- MODO SCANNER -->
+          <!-- SCANNER MODE -->
           <div class="scanner-mode-switch">
             <label class="orb-mode-switch">
               <span>Simple</span>
@@ -175,44 +174,202 @@
 
           <!-- PANEL DE FILTROS -->
           <div id="filtros-panel" class="filtros-panel">
-            <!-- contenido igual -->
+            <div class="filtros-row filtros-row-stack">
+              <select id="filtro-marca" class="filtro-select">
+                <option value="">Marca</option>
+              </select>
+
+              <select id="filtro-rubro" class="filtro-select">
+                <option value="">Rubro</option>
+              </select>
+            </div>
+
+            <div class="filtros-row filtros-row-stack">
+              <input id="filtro-talle-desde" type="number" class="filtro-input" placeholder="Talle desde" />
+              <input id="filtro-talle-hasta" type="number" class="filtro-input" placeholder="Talle hasta" />
+            </div>
+
+            <!-- NUEVO FILTRO DE UNIDADES -->
+            <div class="filtros-row filtros-row-stack">
+              <input id="filtro-unidades-desde" type="number" class="filtro-input" placeholder="Unidades desde" />
+              <input id="filtro-unidades-hasta" type="number" class="filtro-input" placeholder="Unidades hasta" />
+            </div>
+
+            <div class="filtros-row">
+              <button id="btn-aplicar-filtros" class="btn-secondary">Aplicar filtros</button>
+            </div>
           </div>
         </section>
 
         <!-- MAIN ROW -->
         <section class="main-row">
-          <!-- contenido igual -->
+          <div class="results-card">
+            <div class="results-header">
+              <div class="results-title">Resultados</div>
+
+              <div class="results-right">
+                <div class="results-view-toggle">
+                  <button id="btn-ver-tabla" class="view-btn">Tabla</button>
+                  <button id="btn-ver-tarjetas" class="view-btn active">Tarjetas</button>
+                  <button id="btn-ver-articulo" class="view-btn">Artículo</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="results-status" class="results-status">Esperando consulta</div>
+
+            <div id="results-container">
+              <div id="vista-tabla" class="vista active"></div>
+              <div id="vista-tarjeta" class="vista"></div>
+              <div id="vista-articulo" class="vista"></div>
+            </div>
+          </div>
+
+          <!-- DASHBOARD -->
+          <aside class="dashboard-card">
+            <div class="dashboard-header">
+              <div class="dashboard-title">Visión rápida</div>
+              <div class="dashboard-subtitle">Distribución por talle / marca / rubro</div>
+            </div>
+
+            <select id="chart-mode">
+              <option value="talle">Por talle</option>
+              <option value="marca">Por marca</option>
+              <option value="rubro">Por rubro</option>
+            </select>
+
+            <div class="chart-type-row">
+              <button class="chart-type-btn active" data-chart-type="pie">Torta</button>
+              <button class="chart-type-btn" data-chart-type="bar">Barra</button>
+              <button class="chart-type-btn" data-chart-type="line">Líneas</button>
+              <button class="chart-type-btn" data-chart-type="doughnut">Doughnut</button>
+              <button class="chart-type-btn" data-chart-type="polarArea">Polar</button>
+            </div>
+
+            <canvas id="stockChart"></canvas>
+          </aside>
         </section>
 
-        <!-- SCANNER OVERLAY (AISLADO) -->
+        <!-- SCANNER OVERLAY (NUEVO, USADO POR QUAGGA2 + scanner.css) -->
         <div id="scanner-overlay" class="hidden">
           <video id="scanner-video" autoplay playsinline></video>
         </div>
 
         <!-- FUENTE DE DATOS -->
-        <!-- contenido igual -->
+        <section class="fuente-datos-wrapper">
+          <button id="fuente-datos-toggle" class="btn-secondary">Fuente de datos</button>
+
+          <div id="fuente-datos-panel" class="fuente-datos-panel">
+            <div><strong>Archivo:</strong> <span id="fuente-archivo">—</span></div>
+            <div><strong>Fecha:</strong> <span id="fuente-fecha">—</span></div>
+            <div><strong>Marcas:</strong> <span id="fuente-marcas">—</span></div>
+            <div><strong>Rubros:</strong> <span id="fuente-rubros">—</span></div>
+            <div><strong>Artículos:</strong> <span id="fuente-articulos">—</span></div>
+            <div><strong>Stock total:</strong> <span id="fuente-stock-total">—</span></div>
+            <div><strong>Stock negativo:</strong> <span id="fuente-stock-negativo">—</span></div>
+          </div>
+        </section>
 
         <!-- FOOTER -->
-        <!-- contenido igual -->
-
+        <footer class="app-footer">
+          <div class="footer-logo">SCL</div>
+          <div class="footer-text">Salas Creative Lab</div>
+        </footer>
       </div>
     </div>
 
     <!-- PANEL ADMIN -->
-    <!-- contenido igual -->
+    <div id="admin-panel">
+      <h2 class="admin-title">Panel administrador</h2>
+
+      <div class="admin-group">
+        <label class="admin-label">URL backend</label>
+        <input id="admin-backend-url" type="text" class="admin-input" />
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Modo por defecto</label>
+        <select id="admin-modo-defecto" class="admin-select">
+          <option value="simple">Simple</option>
+          <option value="completo">Completo</option>
+        </select>
+      </div>
+
+      <div class="admin-divider"></div>
+
+      <div class="admin-section-title">ORB — Apariencia</div>
+
+      <div class="admin-group">
+        <label class="admin-label">Color día</label>
+        <input id="orb-color" type="color" class="admin-input" />
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Color noche</label>
+        <input id="orb-color-dark" type="color" class="admin-input" />
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Tamaño ORB (px)</label>
+        <input id="orb-size" type="range" min="80" max="200" class="admin-slider" />
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Intensidad halo</label>
+        <input id="orb-halo" type="range" min="0" max="120" class="admin-slider" />
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Modo visual</label>
+        <select id="orb-mode" class="admin-select">
+          <option value="ultra">Ultra</option>
+          <option value="3d">3D</option>
+          <option value="classic">Classic</option>
+        </select>
+      </div>
+
+      <div class="admin-group">
+        <label class="admin-label">Presets</label>
+        <select id="orb-presets" class="admin-select">
+          <option value="default">Default</option>
+          <option value="plasma">Plasma</option>
+          <option value="fuego">Fuego</option>
+          <option value="neon">Neón</option>
+          <option value="minimal">Minimal</option>
+        </select>
+      </div>
+
+      <button id="orb-reset">Reset ORB</button>
+
+      <div class="admin-actions">
+        <button id="admin-guardar">Guardar</button>
+        <button id="admin-cerrar">Cerrar</button>
+      </div>
+    </div>
 
     <!-- MODAL DE AYUDA -->
-    <!-- contenido igual -->
+    <div id="help-modal" class="help-modal hidden">
+      <div class="help-modal-content">
+        <h2>Ayuda rápida</h2>
+        <ul>
+          <li>Escribí o escaneá un código, marca, rubro o talle.</li>
+          <li>Usá el botón 🎤 si el modo dictado está activo.</li>
+          <li>Activá manos libres para consultas continuas.</li>
+          <li>Usá “Solo con stock” y “Filtros” para acotar resultados.</li>
+          <li>Click en métricas para entender el stock global.</li>
+          <li>Atajos: ESC limpia, F2 scanner, F3 voz.</li>
+        </ul>
+        <button id="help-close" class="help-close-btn">Cerrar</button>
+      </div>
+    </div>
 
     <div id="toast" class="toast"></div>
 
-    <!-- LIBRERÍAS -->
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- QUAGGA2 -->
+    <!-- QUAGGA2 (NUEVO SCANNER) -->
     <script src="https://cdn.jsdelivr.net/npm/quagga2@1.2.6/dist/quagga.min.js"></script>
-
-    <!-- SCANNER NUEVO -->
     <script src="scanner_v5_quagga.js?v=20260223"></script>
 
     <!-- RESTO DE LA APP -->
