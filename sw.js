@@ -6,7 +6,7 @@
 const CACHE_VERSION = "stock-ia-v8-2026-02-24";
 const CACHE_NAME = CACHE_VERSION;
 
-// Archivos estáticos REALES que sí existen
+// Archivos estáticos REALES (sin querystring)
 const ASSETS = [
   "/",
   "/index.html",
@@ -29,7 +29,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
-  self.skipWaiting(); // permite que el SW nuevo se instale rápido
+  self.skipWaiting();
 });
 
 // ACTIVATE — limpiar versiones viejas
@@ -59,7 +59,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // HTML SIEMPRE desde la red (para evitar versiones viejas)
+  // HTML SIEMPRE desde la red
   if (req.destination === "document") {
     event.respondWith(
       fetch(req).catch(() => caches.match("/index.html"))
