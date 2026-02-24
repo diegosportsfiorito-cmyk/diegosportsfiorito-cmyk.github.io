@@ -2,7 +2,7 @@
    SCANNER AISLADO — VERSIÓN CORREGIDA 2026
    ============================================================ */
 
-/* Overlay negro que cubre toda la pantalla */
+/* Overlay negro */
 #scanner-overlay {
   position: fixed;
   top: 0;
@@ -14,15 +14,13 @@
   justify-content: center;
   align-items: center;
   z-index: 999999;
-  padding: 0;
-  margin: 0;
 }
 
 #scanner-overlay.hidden {
   display: none;
 }
 
-/* Video sin deformaciones */
+/* Video */
 #scanner-video {
   width: 100%;
   max-width: 600px;
@@ -33,11 +31,25 @@
   box-shadow: 0 0 40px rgba(0,0,0,0.6);
   z-index: 1000000;
 
-  /* FIX DEFINITIVO: imagen NO invertida */
+  /* FIX DEFINITIVO */
   transform: none !important;
 }
 
-/* Controles del scanner */
+/* Focus ring */
+#focus-ring {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 3px solid #4f8cff;
+  border-radius: 12px;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  z-index: 1000003;
+}
+
+/* Controles */
 .scanner-controls {
   position: absolute;
   bottom: 20px;
@@ -48,44 +60,26 @@
   z-index: 1000001;
 }
 
-/* Botones — versión corregida */
+/* Botones dentro del scanner */
 .scanner-btn,
 .scanner-btn-primary,
 .scanner-btn-danger {
+  font-size: 26px !important;
+  width: 58px !important;
+  height: 58px !important;
+  line-height: 58px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
   border: none;
   cursor: pointer;
   z-index: 1000002;
-
-  /* FIX DEFINITIVO: tamaño grande */
-  font-size: 32px !important;
-  width: 70px !important;
-  height: 70px !important;
-  line-height: 70px !important;
-
-  /* FIX: padding eliminado para que no achique el botón */
-  padding: 0 !important;
-
-  /* estética */
-  border-radius: 14px !important;
 }
 
-/* Colores */
-.scanner-btn {
-  background: #1f2937;
-  color: white;
-}
+.scanner-btn { background: #1f2937; color: white; }
+.scanner-btn-primary { background: #2563eb; color: white; }
+.scanner-btn-danger { background: #dc2626; color: white; }
 
-.scanner-btn-primary {
-  background: #2563eb;
-  color: white;
-}
-
-.scanner-btn-danger {
-  background: #dc2626;
-  color: white;
-}
-
-/* Contador de multi-scan */
+/* Contador */
 .scanner-counter {
   position: absolute;
   top: 20px;
@@ -94,4 +88,14 @@
   font-size: 1.4rem;
   color: white;
   z-index: 1000002;
+}
+
+/* Botones de la interfaz principal (📷 y 📲) */
+.scanner-button {
+  font-size: 32px !important;
+  width: 70px !important;
+  height: 70px !important;
+  line-height: 70px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
 }
