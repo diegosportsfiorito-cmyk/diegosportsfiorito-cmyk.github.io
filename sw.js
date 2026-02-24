@@ -3,7 +3,7 @@
    ============================================================ */
 
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v8-2026-02-24";
+const CACHE_VERSION = "stock-ia-v9-2026-02-25";
 const CACHE_NAME = CACHE_VERSION;
 
 // Archivos estáticos REALES (sin querystring)
