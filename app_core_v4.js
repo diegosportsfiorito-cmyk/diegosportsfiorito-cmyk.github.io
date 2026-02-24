@@ -337,6 +337,7 @@ const AppCore = {
         `<option value="">Rubro</option>` +
         [...rubros].sort().map((r) => `<option>${r}</option>`).join("");
   },
+
   // ============================================================
   // PARSER INTELIGENTE — Versión final corregida
   // ============================================================
@@ -631,6 +632,7 @@ const AppCore = {
       ORB.setLoading?.(false);
     }
   },
+
   // ============================================================
   // RENDER RESULTADOS (3 VISTAS)
   // ============================================================
@@ -1000,6 +1002,20 @@ const AppCore = {
 };
 
 // ============================================================
+// BADGE DE VERSIÓN (para footer)
+// ============================================================
+
+function inicializarBadgeVersion() {
+  const badge = document.getElementById("version-badge");
+  const meta = document.querySelector('meta[name="build-version"]');
+
+  if (!badge || !meta) return;
+
+  const version = meta.getAttribute("content") || "v0.0.0";
+  badge.textContent = version;
+}
+
+// ============================================================
 // INSTANCIA GLOBAL
 // ============================================================
 
@@ -1007,6 +1023,7 @@ window.appCore = AppCore;
 
 window.addEventListener("DOMContentLoaded", () => {
   appCore.init();
+  inicializarBadgeVersion();
   inicializarSistemaActualizacion();
 });
 
@@ -1073,3 +1090,15 @@ function mostrarAvisoActualizacion(newWorker) {
     newWorker.postMessage({ action: "skipWaiting" });
   };
 }
+
+// ============================================================
+// CAPTURA GLOBAL DE ERRORES (para rastrear colapsos)
+// ============================================================
+
+window.addEventListener("error", (e) => {
+  console.error("ERROR GLOBAL:", e.message, e.filename, e.lineno);
+});
+
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("PROMISE ERROR:", e.reason);
+});
