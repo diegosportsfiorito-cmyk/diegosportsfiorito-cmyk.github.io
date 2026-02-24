@@ -1,11 +1,18 @@
+/* ============================================================
+   SERVICE WORKER — CACHE AVANZADO + SISTEMA DE ACTUALIZACIÓN
+   ============================================================ */
+
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v7-2026-02-23";
+const CACHE_VERSION = "stock-ia-v8-2026-02-24";
 const CACHE_NAME = CACHE_VERSION;
 
 // Archivos estáticos REALES que sí existen
 const ASSETS = [
+  "/",
+  "/index.html",
   "/styles_v2.css",
   "/scanner.css",
+  "/scanner_v7_barcodeDetector.js",
   "/app_core_v4.js",
   "/ui_engine_v4.js",
   "/orb_engine_v2.js",
@@ -17,25 +24,29 @@ const ASSETS = [
   "/icons/icon-ios.png"
 ];
 
-// INSTALL
+// INSTALL — precache
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
-  self.skipWaiting();
+  self.skipWaiting(); // permite que el SW nuevo se instale rápido
 });
 
-// ACTIVATE
+// ACTIVATE — limpiar versiones viejas
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE_NAME)
+          .map((k) => caches.delete(k))
+      )
     )
   );
   self.clients.claim();
 });
 
-// FETCH — Cache First para assets, Network First para HTML y JS dinámicos
+// FETCH — Cache First para assets, Network First para HTML/JS
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
@@ -80,4 +91,11 @@ self.addEventListener("fetch", (event) => {
       );
     })
   );
+});
+
+// MENSAJES DESDE LA APP (para skipWaiting)
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.action === "skipWaiting") {
+    self.skipWaiting();
+  }
 });
