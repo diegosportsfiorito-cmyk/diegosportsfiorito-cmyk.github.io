@@ -140,7 +140,14 @@ body.light-mode .result-sub {
 .app-container {
   width: 100%;
   max-width: 1100px;
-  background: radial-gradient(circle at top left, #020617 0%, #020617 40%, #020617 100%);
+
+  /* Dejar ver el fondo + dar sensación de panel principal */
+  background: radial-gradient(circle at top left,
+    rgba(2, 6, 23, 0.85) 0%,
+    rgba(2, 6, 23, 0.85) 40%,
+    rgba(2, 6, 23, 0.9) 100%);
+  backdrop-filter: blur(18px);
+
   border-radius: 26px;
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
@@ -152,6 +159,7 @@ body.light-mode .result-sub {
   overflow: hidden;
   z-index: 1;
 }
+
 
 /* Glow de borde IA PRO Ultra */
 .app-container::before {
