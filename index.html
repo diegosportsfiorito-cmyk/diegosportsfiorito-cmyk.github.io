@@ -6,6 +6,9 @@
     <title>STOCK IA PRO — Asistente inteligente</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- MANIFEST PWA -->
+    <link rel="manifest" href="manifest.json" />
+
     <!-- ESTILOS PRINCIPALES -->
     <link rel="stylesheet" href="styles_v2.css?v=20260220" />
     <!-- ESTILO AISLADO DEL SCANNER -->
@@ -259,7 +262,7 @@
         <section class="fuente-datos-wrapper">
           <button id="fuente-datos-toggle" class="btn-secondary">Fuente de datos</button>
 
-          <div id="fuente-datos-panel" class="fuente-datos-panel">
+          <div id="fuente-datos-panel" class="fuente-datos-panel hidden">
             <div><strong>Archivo:</strong> <span id="fuente-archivo">—</span></div>
             <div><strong>Fecha:</strong> <span id="fuente-fecha">—</span></div>
             <div><strong>Marcas:</strong> <span id="fuente-marcas">—</span></div>
@@ -279,7 +282,7 @@
     </div>
 
     <!-- PANEL ADMIN -->
-    <div id="admin-panel">
+    <div id="admin-panel" class="hidden">
       <h2 class="admin-title">Panel administrador</h2>
 
       <div class="admin-group">
