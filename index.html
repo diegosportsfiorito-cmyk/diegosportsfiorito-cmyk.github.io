@@ -38,9 +38,6 @@
             </div>
           </div>
 
-          <!-- BADGE DE VERSIÓN -->
-          <div id="version-badge" class="version-badge">v0.0.0</div>
-
           <div class="header-right">
             <div class="connection-indicator">
               <span class="connection-dot" id="connection-dot"></span>
@@ -79,7 +76,7 @@
             </div>
           </div>
 
-          <!-- SCANNER BUTTONS (2 ICONOS ORIGINALES) -->
+          <!-- SCANNER BUTTONS -->
           <div class="scanner-buttons">
             <button id="btn-scanner-interno-1" class="scanner-button">📷</button>
             <button id="btn-scanner-externo-preferido" class="scanner-button">📲</button>
@@ -195,7 +192,6 @@
               <input id="filtro-talle-hasta" type="number" class="filtro-input" placeholder="Talle hasta" />
             </div>
 
-            <!-- NUEVO FILTRO DE UNIDADES -->
             <div class="filtros-row filtros-row-stack">
               <input id="filtro-unidades-desde" type="number" class="filtro-input" placeholder="Unidades desde" />
               <input id="filtro-unidades-hasta" type="number" class="filtro-input" placeholder="Unidades hasta" />
@@ -256,7 +252,7 @@
           </aside>
         </section>
 
-        <!-- SCANNER OVERLAY (CON OVERLAY DE ENFOQUE + GUIAS + LASER) -->
+        <!-- SCANNER OVERLAY -->
         <div id="scanner-overlay" class="hidden">
           <video id="scanner-video" autoplay playsinline></video>
           <div id="focus-ring"></div>
@@ -281,9 +277,16 @@
 
         <!-- FOOTER -->
         <footer class="app-footer">
-          <div class="footer-logo">SCL</div>
-          <div class="footer-text">Salas Creative Lab</div>
+          <div class="footer-left">
+            <div class="footer-logo">SCL</div>
+            <div class="footer-text">Salas Creative Lab</div>
+          </div>
+
+          <div class="footer-right">
+            <span id="version-badge" class="version-badge">v0.0.0</span>
+          </div>
         </footer>
+
       </div>
     </div>
 
