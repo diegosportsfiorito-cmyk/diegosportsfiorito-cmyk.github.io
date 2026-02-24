@@ -1007,4 +1007,69 @@ window.appCore = AppCore;
 
 window.addEventListener("DOMContentLoaded", () => {
   appCore.init();
+  inicializarSistemaActualizacion();
 });
+
+/* ============================================================
+   SISTEMA DE ACTUALIZACIÓN — Opción 2 (Optimizado)
+   ============================================================ */
+
+function inicializarSistemaActualizacion() {
+  if (!("serviceWorker" in navigator)) return;
+
+  let newWorker = null;
+
+  navigator.serviceWorker
+    .register("service-worker.js")
+    .then((reg) => {
+      // Detecta cuando hay un SW nuevo
+      reg.addEventListener("updatefound", () => {
+        newWorker = reg.installing;
+
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            mostrarAvisoActualizacion(newWorker);
+          }
+        });
+      });
+    })
+    .catch((err) => {
+      console.warn("Error registrando SW:", err);
+    });
+
+  // Cuando el nuevo SW toma control → recargar
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
+}
+
+function mostrarAvisoActualizacion(newWorker) {
+  const toast = document.getElementById("toast");
+  if (!toast) return;
+
+  toast.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <span>Nueva versión disponible</span>
+      <button id="btn-update-now" 
+        style="
+          padding:8px 12px;
+          background:#2563eb;
+          color:white;
+          border:none;
+          border-radius:6px;
+          cursor:pointer;
+        ">
+        Actualizar ahora
+      </button>
+    </div>
+  `;
+
+  toast.classList.add("show");
+
+  document.getElementById("btn-update-now").onclick = () => {
+    newWorker.postMessage({ action: "skipWaiting" });
+  };
+}
