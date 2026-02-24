@@ -84,6 +84,18 @@
   z-index: 1000002;
 }
 
+/* Corrige imagen espejo de la cámara */
 #scanner-video {
   transform: scaleX(-1);
 }
+
+/* Tamaño de los botones del scanner */
+.scanner-btn,
+.scanner-btn-primary,
+.scanner-btn-danger {
+  font-size: 28px;   /* tamaño del icono */
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+}
+
