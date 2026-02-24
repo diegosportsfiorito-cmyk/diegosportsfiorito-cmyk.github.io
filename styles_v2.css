@@ -67,8 +67,10 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 
+  /* Fondo con imagen + overlay de profundidad */
   background:
-    radial-gradient(circle at top, #0b1120 0, #020617 45%, #000 100%);
+    radial-gradient(circle at top, rgba(15, 23, 42, 0.9) 0, #020617 45%, #000 100%),
+    url("fondo-chip.jpg") center center / cover fixed no-repeat;
 
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
@@ -417,7 +419,6 @@ body.light-mode .result-sub {
   color: #c62828 !important;
   border: 1px solid #c62828 !important;
 }
-
 /* ============================================================
    13 — VOZ
    ============================================================ */
@@ -888,7 +889,6 @@ body.light-mode #orb-core.orb-listening {
   font-size: 0.75rem;
   line-height: 1.3;
 }
-
 /* ============================================================
    25 — VISTA TABLA
    ============================================================ */
@@ -1675,6 +1675,7 @@ body.light-mode .scanner-counter {
   margin-top: 10px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   font-size: 0.78rem;
   color: var(--text-muted);
@@ -1692,6 +1693,22 @@ body.light-mode .scanner-counter {
   font-size: 0.7rem;
   font-weight: 700;
   color: #e5e7eb;
+}
+
+.version-badge {
+  background: #1f2937;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  opacity: 0.85;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+
+.version-badge.update-available {
+  background: #2563eb;
+  opacity: 1;
+  font-weight: bold;
 }
 /* ============================================================
    IA PRO ULTRA V5 — BLOQUE 12
@@ -1756,7 +1773,8 @@ body.light-mode .scanner-counter {
   .search-card,
   .results-card,
   .dashboard-card {
-    background: rgba(15, 23, 42, 0.9) !important;
+    background: rgba(15, 23, 42, 0.82) !important;
+    backdrop-filter: blur(18px);
     padding: 12px !important;
     margin: 0 !important;
   }
@@ -1845,91 +1863,10 @@ body.light-mode .scanner-counter {
     font-size: 0.8rem;
   }
 }
+
 /* ============================================================
-   SCANNER AISLADO — QUAGGA2 — IA PRO ULTRA (2026)
+   TOAST
    ============================================================ */
-
-/* Overlay negro que cubre toda la pantalla */
-#scanner-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.92) !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 999999 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-#scanner-overlay.hidden {
-  display: none !important;
-}
-
-/* Video sin deformaciones */
-#scanner-video {
-  width: 100% !important;
-  max-width: 600px !important;
-  height: auto !important;
-  transform: scaleX(-1) !important; /* mejora lectura en móviles */
-  border-radius: 12px !important;
-  background: black !important;
-  object-fit: contain !important;
-  box-shadow: 0 0 40px rgba(0,0,0,0.6) !important;
-  z-index: 999999 !important;
-}
-
-/* Controles del scanner */
-.scanner-controls {
-  position: absolute !important;
-  bottom: 20px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  gap: 12px !important;
-  z-index: 1000000 !important;
-}
-
-/* Botones */
-.scanner-btn,
-.scanner-btn-primary,
-.scanner-btn-danger {
-  padding: 10px 16px !important;
-  border-radius: 12px !important;
-  border: none !important;
-  font-size: 1rem !important;
-  cursor: pointer !important;
-  z-index: 1000001 !important;
-}
-
-.scanner-btn {
-  background: #1f2937 !important;
-  color: white !important;
-}
-
-.scanner-btn-primary {
-  background: #2563eb !important;
-  color: white !important;
-}
-
-.scanner-btn-danger {
-  background: #dc2626 !important;
-  color: white !important;
-}
-
-/* Contador de multi-scan */
-.scanner-counter {
-  position: absolute !important;
-  top: 20px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  font-size: 1.4rem !important;
-  color: white !important;
-  z-index: 1000001 !important;
-}
 
 .toast {
   position: fixed;
@@ -1947,23 +1884,4 @@ body.light-mode .scanner-counter {
 
 .toast.show {
   opacity: 1;
-}
-.version-badge {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  background: #1f2937;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  opacity: 0.85;
-  z-index: 9999;
-  transition: background 0.3s ease, opacity 0.3s ease;
-}
-
-.version-badge.update-available {
-  background: #2563eb;
-  opacity: 1;
-  font-weight: bold;
 }
