@@ -1,6 +1,6 @@
 /* ============================================================
-   SCANNER V7 — BarcodeDetector + Autofocus + AutoExposure
-   + Overlay + Motion Refocus + Fast CODE_128
+   SCANNER V8 — BarcodeDetector + Autofocus + AutoExposure
+   + Overlay + Motion Refocus + Fast CODE_128 + Zoom/Torch Pro
    ============================================================ */
 
 (function () {
@@ -15,12 +15,18 @@
 
   let lastFrameData = null;
   let lastMotionTime = 0;
-  const MOTION_THRESHOLD = 18;
+  const MOTION_THRESHOLD = 12;              // antes 18 → más sensible
   const MOTION_REFOCUS_INTERVAL = 1200;
+
+  // Fast-read CODE_128
+  let lastCodeValue = null;
+  let lastCodeTime = 0;
+  const FAST_CODE_WINDOW = 800;            // ms para evitar duplicados rápidos
 
   const overlay = document.getElementById("scanner-overlay");
   const video = document.getElementById("scanner-video");
   const focusRing = document.getElementById("focus-ring");
+  const scanLaser = document.getElementById("scan-laser");
 
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
@@ -97,9 +103,14 @@
     torchOn = !torchOn;
 
     try {
-      await track.applyConstraints({
-        advanced: [{ torch: torchOn }],
-      });
+      const advanced = [{ torch: torchOn }];
+
+      // Fallback para algunos Samsung / dispositivos raros
+      if ("brightness" in caps) {
+        advanced[0].brightness = torchOn ? caps.brightness?.max || 1 : caps.brightness?.min || 0;
+      }
+
+      await track.applyConstraints({ advanced });
     } catch (e) {
       window.appCore?.showToast?.("No se pudo activar la linterna");
     }
@@ -116,7 +127,15 @@
     }
 
     maxZoom = caps.zoom.max || 1;
-    zoomLevel = Math.max(1, Math.min(zoomLevel, maxZoom));
+
+    // Zoom inteligente: step según rango de zoom
+    const range = (caps.zoom.max || 1) - (caps.zoom.min || 1);
+    let step = 0.2;
+    if (range > 3) step = 0.5;
+    else if (range > 1.5) step = 0.3;
+
+    // Normalizar zoomLevel dentro de rango
+    zoomLevel = Math.max(caps.zoom.min || 1, Math.min(zoomLevel, maxZoom));
 
     try {
       await track.applyConstraints({
@@ -125,6 +144,9 @@
     } catch (e) {
       console.warn("Zoom error:", e);
     }
+
+    // Guardar step en la función para reutilizarlo en los botones
+    applyZoom._step = step;
   }
 
   /* ============================================================
@@ -249,14 +271,31 @@
     zoomLevel = 1;
     lastFrameData = null;
     lastMotionTime = 0;
+    lastCodeValue = null;
+    lastCodeTime = 0;
+
+    if (scanLaser) scanLaser.classList.remove("active");
 
     stopCamera();
     overlay.classList.add("hidden");
     document.body.classList.remove("scanner-active");
   }
 
-  function handleDetected(rawCode) {
+  function handleDetected(rawCode, format) {
     if (!rawCode) return;
+
+    const now = Date.now();
+
+    // Fast CODE_128: evitar duplicados muy seguidos
+    const isCode128 = (format || "").toLowerCase().includes("code_128");
+    if (isCode128) {
+      if (lastCodeValue === rawCode && now - lastCodeTime < FAST_CODE_WINDOW) {
+        return;
+      }
+      lastCodeValue = rawCode;
+      lastCodeTime = now;
+    }
+
     beep();
 
     let code = rawCode;
@@ -299,6 +338,8 @@
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    if (scanLaser) scanLaser.classList.add("active");
+
     async function loop() {
       if (!scanning || !video || video.readyState !== 4) {
         if (scanning) requestAnimationFrame(loop);
@@ -309,12 +350,13 @@
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      // --- DETECCIÓN DE MOVIMIENTO PARA RE-ENFOQUE ---
+      // --- DETECCIÓN DE MOVIMIENTO PARA RE-ENFOQUE (optimizada) ---
       try {
         const frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
         if (lastFrameData) {
           let diff = 0;
-          const step = 16;
+          const step = 24; // un poco más grande → menos CPU
+
           for (let i = 0; i < frame.data.length; i += 4 * step) {
             const d =
               Math.abs(frame.data[i] - lastFrameData.data[i]) +
@@ -322,9 +364,10 @@
               Math.abs(frame.data[i + 2] - lastFrameData.data[i + 2]);
             diff += d;
           }
-          const avgDiff = diff / (frame.data.length / (4 * step));
 
+          const avgDiff = diff / (frame.data.length / (4 * step));
           const now = Date.now();
+
           if (
             avgDiff > MOTION_THRESHOLD &&
             now - lastMotionTime > MOTION_REFOCUS_INTERVAL
@@ -353,7 +396,8 @@
           }
 
           if (best.rawValue) {
-            handleDetected(best.rawValue);
+            const fmt = (best.format || best.formatName || "").toLowerCase();
+            handleDetected(best.rawValue, fmt);
           }
         }
       } catch (e) {
@@ -385,6 +429,7 @@
     if (!ok) return;
 
     autoFocusExposureLoop();
+    await applyZoom(); // inicializa maxZoom y step
     startDecoding();
 
     const btnTorch = document.getElementById("scn-torch");
@@ -394,16 +439,21 @@
     const btnMulti = document.getElementById("scn-multi");
 
     if (btnTorch) btnTorch.onclick = toggleTorch;
+
     if (btnZoomIn)
       btnZoomIn.onclick = () => {
-        zoomLevel += 0.3;
+        const step = applyZoom._step || 0.3;
+        zoomLevel += step;
         applyZoom();
       };
+
     if (btnZoomOut)
       btnZoomOut.onclick = () => {
-        zoomLevel -= 0.3;
+        const step = applyZoom._step || 0.3;
+        zoomLevel -= step;
         applyZoom();
       };
+
     if (btnClose)
       btnClose.onclick = () => {
         closeScanner();
