@@ -84,3 +84,6 @@
   z-index: 1000002;
 }
 
+#scanner-video {
+  transform: scaleX(-1);
+}
