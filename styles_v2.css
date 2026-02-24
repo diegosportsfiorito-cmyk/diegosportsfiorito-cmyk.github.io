@@ -1930,3 +1930,21 @@ body.light-mode .scanner-counter {
   color: white !important;
   z-index: 1000001 !important;
 }
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9999999;
+}
+
+.toast.show {
+  opacity: 1;
+}
