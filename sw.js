@@ -1,16 +1,18 @@
 /* ============================================================
    SERVICE WORKER — CACHE AVANZADO + SISTEMA DE ACTUALIZACIÓN
+   (VERSIÓN CORREGIDA — NO ROMPE FONDO NI GLASS)
    ============================================================ */
 
 // Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v12-2026-02-27";
+const CACHE_VERSION = "stock-ia-v13-2026-02-27";
 const CACHE_NAME = CACHE_VERSION;
 
 // Archivos estáticos REALES (sin querystring)
 const ASSETS = [
   "/",
   "/index.html",
-  "/styles_v2.css",
+  // NO cacheamos el CSS principal para evitar versiones viejas
+  // "/styles_v2.css",
   "/scanner.css",
   "/scanner_v7_barcodeDetector.js",
   "/app_core_v4.js",
@@ -75,7 +77,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Assets estáticos → Cache First
+  // CSS principal SIEMPRE desde la red (para evitar cache viejo)
+  if (req.destination === "style") {
+    event.respondWith(fetch(req));
+    return;
+  }
+
+  // Resto de assets estáticos → Cache First
   event.respondWith(
     caches.match(req).then((cached) => {
       return (
