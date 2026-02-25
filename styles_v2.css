@@ -943,6 +943,8 @@ body.light-mode #orb-core.orb-listening {
   width: 100%;
   overflow-x: auto;
   padding-bottom: 6px;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+  scrollbar-width: thin;
 }
 
 .tabla-resultados {
