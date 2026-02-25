@@ -1869,3 +1869,51 @@ body.light-mode .scanner-counter {
 .toast.show {
   opacity: 1;
 }
+/* ============================================================
+   GLASSMORPHISM PREMIUM — IA PRO ULTRA V5
+   Paneles flotantes + profundidad real
+   ============================================================ */
+
+.search-card,
+.results-card,
+.dashboard-card,
+.metric-card,
+.autocomplete-list,
+#results-container,
+#dashboard-container,
+.filters-panel,
+.vista,
+.result-item {
+  background: rgba(15, 23, 42, 0.32) !important;   /* Transparencia real */
+  backdrop-filter: blur(22px) !important;          /* Profundidad */
+  -webkit-backdrop-filter: blur(22px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Input fields también deben ser glass */
+.search-input,
+.admin-input,
+.admin-select,
+#chart-mode {
+  background: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Tabla glass */
+.tabla-resultados th,
+.tabla-resultados td {
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+
+/* Vista artículo */
+.tabla-talles th,
+.tabla-talles td {
+  background: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
