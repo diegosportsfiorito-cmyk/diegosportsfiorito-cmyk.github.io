@@ -22,7 +22,7 @@
   --text-muted: #9ca3af;
 
   --card-bg: rgba(10, 16, 32, 0.96);
-  --card-glass: rgba(15, 23, 42, 0.35);
+  --card-glass: rgba(15, 23, 42, 0.05);
   --border-soft: rgba(148, 163, 184, 0.35);
   --border-glass: rgba(148, 163, 184, 0.55);
   --shadow-soft: 0 22px 60px rgba(0, 0, 0, 0.75);
@@ -158,7 +158,7 @@ body.light-mode .result-sub {
   max-width: 1100px;
 
   /* Fondo glass real */
-  background: rgba(2, 6, 23, 0.25);
+  background: rgba(2, 6, 23, 0.05);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 
@@ -348,7 +348,7 @@ body.light-mode .result-sub {
 .search-input {
   width: 100%;
   padding: 10px 14px;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.05);
   border: 1px solid rgba(31, 41, 55, 0.9);
   border-radius: var(--radius-md);
   color: var(--text-main);
@@ -765,7 +765,7 @@ body.light-mode #orb-core.orb-listening {
 
 .metric-card {
   flex: 1;
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(15, 23, 42, 0.05);
   border: 1px solid rgba(55, 65, 81, 0.9);
   border-radius: var(--radius-md);
   padding: 10px;
@@ -850,8 +850,8 @@ body.light-mode #orb-core.orb-listening {
 .result-item {
   background: linear-gradient(
   135deg,
-  rgba(148, 163, 184, 0.08),
-  rgba(15, 23, 42, 0.45)
+  rgba(148, 163, 184, 0.05),
+  rgba(15, 23, 42, 0.05)
 );
   border: 1px solid rgba(148, 163, 184, 0.45);
   border-radius: var(--radius-md);
@@ -1204,7 +1204,7 @@ body.light-mode #orb-core.orb-listening {
 .admin-input,
 .admin-select {
   padding: 8px;
-  background: rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.5);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   color: var(--text-main);
@@ -1898,7 +1898,7 @@ body.light-mode .scanner-counter {
 .filters-panel,
 .vista,
 .result-item {
-  background: rgba(15, 23, 42, 0.32) !important;   /* Transparencia real */
+  background: rgba(15, 23, 42, 0.05) !important;   /* Transparencia real */
   backdrop-filter: blur(22px) !important;          /* Profundidad */
   -webkit-backdrop-filter: blur(22px) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -1910,7 +1910,7 @@ body.light-mode .scanner-counter {
 .admin-input,
 .admin-select,
 #chart-mode {
-  background: rgba(15, 23, 42, 0.45) !important;
+  background: rgba(15, 23, 42, 0.05) !important;
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
