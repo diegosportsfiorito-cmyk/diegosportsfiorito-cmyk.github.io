@@ -74,27 +74,29 @@ body {
 
 /* ============================================================
    FONDO QUANTUM CIRCUIT — SUAVE (Azul + Violeta)
-   IA PRO ULTRA V5
+   IA PRO ULTRA V5 — CORREGIDO
    ============================================================ */
 
 body {
   background:
-    /* Capa 1 — Sombra profunda */
-    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 0.75) 100%),
+    /* Capa 1 — Sombra suave (antes estaba demasiado oscura) */
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.45) 60%, rgba(0, 0, 0, 0.35) 100%),
 
-    /* Capa 2 — Circuitos difuminados (profundidad) */
+    /* Capa 2 — Circuitos difuminados */
     url("/img/bg-quantum-blur.png") center center / cover no-repeat,
 
-    /* Capa 3 — Circuitos nítidos (foreground) */
+    /* Capa 3 — Circuitos nítidos */
     url("/img/bg-quantum-foreground.png") center center / cover no-repeat,
 
     /* Capa 4 — Glow azul-violeta suave */
-    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.18), transparent 70%),
+    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
 
     /* Capa 5 — Base */
     #020617;
 
   background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 /* ============================================================
@@ -130,10 +132,8 @@ body.light-mode .result-sub {
 
 @media (max-width: 600px) {
   body {
-    background:
-      radial-gradient(circle at 0% 0%, #1d4ed8 0, transparent 45%),
-      radial-gradient(circle at 100% 0%, #22c55e 0, transparent 45%),
-      radial-gradient(circle at 50% 100%, #0ea5e9 0, #020617 55%);
+    background-attachment: fixed;
+    background-size: cover;
   }
 }
 /* ============================================================
