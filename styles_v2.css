@@ -1933,3 +1933,59 @@ body.light-mode .scanner-counter {
   backdrop-filter: blur(14px) !important;
   -webkit-backdrop-filter: blur(14px) !important;
 }
+/* ============================================================
+   IA PRO ULTRA — FIX TABLA (ALTURA + SCROLL HORIZONTAL)
+   ============================================================ */
+
+/* A) Filas más compactas */
+.tabla-resultados th,
+.tabla-resultados td {
+  padding: 4px 8px !important;
+}
+
+.tabla-resultados {
+  border-spacing: 4px 2px !important;
+}
+
+/* B) Scroll horizontal visible */
+.tabla-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 6px;
+
+  /* Scrollbar moderno (Firefox) */
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+  scrollbar-width: thin;
+
+  position: relative; /* necesario para la sombra lateral */
+}
+
+/* Scrollbar moderno (Chrome/Edge/Safari) */
+.tabla-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabla-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabla-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 6px;
+}
+
+.tabla-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.55);
+}
+
+/* C) Indicador visual de desplazamiento (sombra lateral) */
+.tabla-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
+}
