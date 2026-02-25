@@ -948,13 +948,13 @@ body.light-mode #orb-core.orb-listening {
 .tabla-resultados {
   width: 100%;
   border-collapse: separate;
-  border-spacing: 8px 4px;
+  border-spacing: 4px 2px;
   min-width: 900px;
 }
 
 .tabla-resultados th,
 .tabla-resultados td {
-  padding: 8px 10px;
+  padding: 4px 8px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 6px;
   text-align: left;
