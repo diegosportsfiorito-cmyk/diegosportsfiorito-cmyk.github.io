@@ -1,6 +1,6 @@
 // ============================================================
 // APP CORE — Motor inteligente + warm-up + indicador visual
-// Versión refactorizada premium 2026-02-24
+// Versión refactorizada premium 2026-02-24 (con fixes AbortError)
 // ============================================================
 
 const AppCore = {
@@ -294,6 +294,9 @@ const AppCore = {
   },
 
   async warmUpLoop() {
+    // FIX: si hay una búsqueda activa, no interferir
+    if (this.state.currentAbort) return;
+
     const ok = await this.pingBackend();
     if (!ok) {
       clearTimeout(this.state.retryTimeout);
@@ -507,7 +510,7 @@ AppCore.interpretarQuery = function (raw) {
 };
 
 // ============================================================
-// BÚSQUEDA PRINCIPAL
+// BÚSQUEDA PRINCIPAL (FIX AbortError)
 // ============================================================
 AppCore.buscar = async function () {
   const raw = this.els.searchInput?.value || "";
@@ -572,24 +575,27 @@ AppCore.buscar = async function () {
       this.speakResultados();
     }
   } catch (err) {
-    if (err.name !== "AbortError") {
-      this.setConnectionStatus(false);
-      ORB.setError?.(true);
-
-      this.setSearchStatus("Error de conexión", "red");
-      if (this.els.resultsStatus)
-        this.els.resultsStatus.textContent = "Error de conexión";
-
-      clearTimeout(this.state.retryTimeout);
-      this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
+    if (err.name === "AbortError") {
+      // No mostrar error: es un aborto normal por nueva búsqueda / warm-up
+      return;
     }
+
+    this.setConnectionStatus(false);
+    ORB.setError?.(true);
+
+    this.setSearchStatus("Error de conexión", "red");
+    if (this.els.resultsStatus)
+      this.els.resultsStatus.textContent = "Error de conexión";
+
+    clearTimeout(this.state.retryTimeout);
+    this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
   } finally {
     ORB.setLoading?.(false);
   }
 };
 
 // ============================================================
-// BÚSQUEDA POR FILTROS (incluye unidades)
+// BÚSQUEDA POR FILTROS (incluye unidades + FIX AbortError)
 // ============================================================
 AppCore.actualizarFiltrosDesdeUI = function () {
   this.state.filtros.marca = this.els.filtroMarca?.value || null;
@@ -689,7 +695,12 @@ AppCore.buscarPorFiltros = async function () {
 
     if (this.els.resultsStatus)
       this.els.resultsStatus.textContent = `${items.length} resultados`;
-  } catch {
+  } catch (err) {
+    if (err.name === "AbortError") {
+      // No mostrar error: es un aborto normal
+      return;
+    }
+
     this.setConnectionStatus(false);
     ORB.setError?.(true);
     this.setSearchStatus("Error de conexión", "red");
@@ -746,7 +757,7 @@ AppCore.renderVistaTabla = function (items) {
           </tr>
         </thead>
         <tbody>
-  `;
+ `;
 
   items.forEach((item) => {
     const talles = (item.talles || [])
