@@ -67,19 +67,35 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
 
-  /* Fondo con profundidad + imagen */
-  background:
-    linear-gradient(
-      rgba(0, 0, 0, 0.75),
-      rgba(0, 0, 0, 0.85)
-    ),
-    url("/img/bg-chip.jpg") center center / cover fixed no-repeat;
-
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
+/* ============================================================
+   FONDO QUANTUM CIRCUIT — SUAVE (Azul + Violeta)
+   IA PRO ULTRA V5
+   ============================================================ */
+
+body {
+  background:
+    /* Capa 1 — Sombra profunda */
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 0.75) 100%),
+
+    /* Capa 2 — Circuitos difuminados (profundidad) */
+    url("/img/bg-quantum-blur.png") center center / cover no-repeat,
+
+    /* Capa 3 — Circuitos nítidos (foreground) */
+    url("/img/bg-quantum-foreground.png") center center / cover no-repeat,
+
+    /* Capa 4 — Glow azul-violeta suave */
+    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.18), transparent 70%),
+
+    /* Capa 5 — Base */
+    #020617;
+
+  background-attachment: fixed;
+}
 
 /* ============================================================
    04 — MODO DÍA
