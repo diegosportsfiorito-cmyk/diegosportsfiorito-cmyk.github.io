@@ -57,6 +57,7 @@
 html,
 body {
   height: 100%;
+  background-color: #020617;  /* mismo base que tu fondo Quantum */
 }
 
 /* ============================================================
@@ -132,8 +133,9 @@ body.light-mode .result-sub {
 
 @media (max-width: 600px) {
   body {
-    background-attachment: fixed;
+    background-attachment: scroll;   /* <- clave en mobile */
     background-size: cover;
+    background-repeat: no-repeat;
   }
 }
 /* ============================================================
