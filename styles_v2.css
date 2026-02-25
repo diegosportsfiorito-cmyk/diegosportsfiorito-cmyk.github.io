@@ -1340,23 +1340,6 @@ body.light-mode #orb-core.orb-listening {
    39 — OVERLAY PRINCIPAL
    ============================================================ */
 
-.scanner-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(6px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999999;
-  opacity: 1;
-  transition: opacity 0.25s ease-out;
-}
-
-.scanner-overlay.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
 
 /* Bloquea scroll cuando el scanner está activo */
 body.scanner-active {
