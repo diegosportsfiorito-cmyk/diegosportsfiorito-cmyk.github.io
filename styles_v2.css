@@ -160,7 +160,7 @@ body.light-mode .result-sub {
   max-width: 1100px;
 
   /* Fondo glass real */
-  background: transparent;  /*rgba(2, 6, 23, 0. 0);*/
+  background: rgba(2, 6, 23, 0. 0);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 
@@ -313,7 +313,7 @@ body.light-mode .result-sub {
    ============================================================ */
 
 .search-card {
- background: rgba(255,255,255,0.03);   /* var(--card-glass); /*
+ background: var(--card-glass);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-lg);
   padding: 16px;
@@ -350,7 +350,7 @@ body.light-mode .result-sub {
 .search-input {
   width: 100%;
   padding: 10px 14px;
-  background: rgba(15, 23, 42, 0.05);
+  background: rgba(15, 23, 42, 0.45);
   border: 1px solid rgba(31, 41, 55, 0.9);
   border-radius: var(--radius-md);
   color: var(--text-main);
@@ -379,7 +379,7 @@ body.light-mode .result-sub {
   top: 100%;
   left: 0;
   right: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(55, 65, 81, 0.9);
   border-radius: var(--radius-md);
   z-index: 9999;
