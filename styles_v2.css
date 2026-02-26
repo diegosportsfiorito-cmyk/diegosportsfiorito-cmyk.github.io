@@ -1902,7 +1902,7 @@ body.light-mode .scanner-counter {
 .filters-panel,
 .vista,
 .result-item {
-  background: rgba(15, 23, 42, 0.45) !important;   /* Transparencia real */
+  background: rgba(15, 23, 42, 0.05) !important;   /* Transparencia real */
   backdrop-filter: blur(22px) !important;          /* Profundidad */
   -webkit-backdrop-filter: blur(22px) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
