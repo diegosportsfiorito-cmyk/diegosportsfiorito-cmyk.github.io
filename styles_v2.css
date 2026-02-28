@@ -99,7 +99,7 @@ body {
 }
 
 /* ============================================================
-   05 — MODO DÍA
+   05 — MODO DÍA (ÚNICO MODO)
    ============================================================ */
 
 body.light-mode {
@@ -108,7 +108,7 @@ body.light-mode {
 }
 
 body.light-mode .app-container {
-  background: linear-gradient(145deg, #ffffff 0%, #f3f4f6 40%, #e5e7eb 100%);
+  background: rgba(255,255,255,0.65) !important;
   border-color: rgba(148, 163, 184, 0.4);
 }
 
@@ -116,7 +116,7 @@ body.light-mode .result-item,
 body.light-mode .search-card,
 body.light-mode .results-card,
 body.light-mode .dashboard-card {
-  background: #ffffffee !important;
+  background: #ffffffdd !important;
   color: #111 !important;
   border-color: #d1d5db !important;
 }
@@ -126,37 +126,31 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   06 — MOBILE PLASMA
+   06 — MOBILE PLASMA (FONDO TRANSPARENTE)
    ============================================================ */
 
 @media (max-width: 600px) {
-  body {
-    background-attachment: scroll;
-    background-size: cover;
-    background-repeat: no-repeat;
+  .app-container {
+    background: rgba(2, 6, 23, 0.06) !important;
+    backdrop-filter: blur(22px);
   }
 }
 
 /* ============================================================
-   ESTADOS INICIALES — TODO OCULTO HASTA QUE EL USUARIO LO ACTIVE
+   ESTADOS INICIALES — SOLO PANEL HELP / ADMIN / FILTROS / FUENTE
    ============================================================ */
 
-.help-overlay,
-.filtros-panel,
-.admin-panel,
-.results-card,
-.dashboard-card {
-  display: none !important;
+#help-modal,
+#admin-panel,
+#filtros-panel,
+#fuente-datos-panel {
+  display: none;
 }
 
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 2
    LAYOUT + HEADER
    HUD EXTREMO A2 + B3 + C1
-   ============================================================ */
-
-/* ============================================================
-   06 — LAYOUT GENERAL
    ============================================================ */
 
 .app-shell {
@@ -171,21 +165,19 @@ body.light-mode .result-sub {
   width: 100%;
   max-width: 1100px;
 
-  /* HUD EXTREMO: glass + transparencia + borde azul eléctrico */
   background: rgba(2, 6, 23, 0.06);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 
   border-radius: 26px;
-  border: 1px solid rgba(59, 130, 246, 0.55); /* B3 */
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85); /* C1 */
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
 
   position: relative;
   overflow: hidden;
   z-index: 1;
 }
 
-/* Glow de borde IA PRO Ultra */
 .app-container::before {
   content: "";
   position: absolute;
@@ -206,8 +198,6 @@ body.light-mode .result-sub {
   justify-content: space-between;
   gap: 12px;
 }
-
-/* Branding */
 
 .branding {
   display: flex;
@@ -243,7 +233,7 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   08 — HEADER RIGHT (CONEXIÓN + AYUDA)
+   08 — HEADER RIGHT
    ============================================================ */
 
 .header-right {
@@ -275,22 +265,16 @@ body.light-mode .result-sub {
   box-shadow: 0 0 10px rgba(52, 211, 153, 0.9);
 }
 
-/* Botón ayuda */
-
 .btn-help {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-
-  /* HUD EXTREMO */
   border: 1px solid rgba(59, 130, 246, 0.45);
   background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(14px);
-
   color: var(--text-main);
   font-size: 1rem;
   cursor: pointer;
-
   transition: background var(--transition-fast), border-color var(--transition-fast),
     transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -301,7 +285,6 @@ body.light-mode .result-sub {
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
 }
-
 /* ============================================================
    09 — HEADER MOBILE
    ============================================================ */
@@ -320,10 +303,10 @@ body.light-mode .result-sub {
     border-radius: 18px;
   }
 }
+
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 3
    SEARCH + AUTOCOMPLETE + ACCIONES + VOZ + SWITCHES
-   HUD EXTREMO A2 + B3 + C1
    ============================================================ */
 
 /* ============================================================
@@ -628,205 +611,26 @@ input:checked + .slider:before {
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
 }
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 4
-   ORB COMPLETO (ULTRA, 3D, CLASSIC, ESTADOS, ANIMACIONES)
-   HUD EXTREMO A2 + B3 + C1
-   ============================================================ */
-
-/* ============================================================
-   16 — ORB CONTENEDOR
-   ============================================================ */
-
-.orb-zone {
-  display: flex;
-  justify-content: center;
-  margin-top: 6px;
-}
-
-.orb-actions-ring {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-#orb-core {
-  width: var(--orb-size);
-  height: var(--orb-size);
-  border-radius: 50%;
-  position: relative;
-  margin: auto;
-  cursor: pointer;
-
-  /* HUD EXTREMO */
-  border: 2px solid rgba(59, 130, 246, 0.75); /* B3 */
-  box-shadow:
-    0 0 60px rgba(59, 130, 246, 0.55),
-    0 0 120px rgba(0, 0, 0, 0.85); /* C1 */
-
-  transition: transform 0.25s ease, filter 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  #orb-core {
-    width: var(--orb-size-mobile);
-    height: var(--orb-size-mobile);
-  }
-}
-
-/* ============================================================
-   17 — ORB MODOS (ULTRA / 3D / CLASSIC)
-   ============================================================ */
-
-/* MODO ULTRA (default) */
-.orb-ultra {
-  background: radial-gradient(circle at 30% 20%, var(--orb-color), var(--orb-color-dark));
-  box-shadow:
-    0 0 calc(var(--orb-halo-strength) * 1px) rgba(96, 165, 250, 1),
-    inset 0 0 40px rgba(255, 255, 255, 0.25),
-    0 0 80px rgba(0, 0, 0, 0.85); /* C1 */
-  animation: orbBreath 2.4s infinite ease-in-out;
-}
-
-/* MODO 3D */
-.orb-3d {
-  background: radial-gradient(circle at 25% 25%, var(--orb-color), #000);
-  box-shadow:
-    0 0 calc(var(--orb-halo-strength) * 1px) rgba(96, 165, 250, 1),
-    inset -20px -20px 40px rgba(0, 0, 0, 0.6),
-    inset 20px 20px 40px rgba(255, 255, 255, 0.15),
-    0 0 80px rgba(0, 0, 0, 0.85);
-  animation: orbRotate 4s infinite linear;
-}
-
-/* MODO CLASSIC */
-.orb-classic {
-  background: radial-gradient(circle at 50% 50%, var(--orb-color), var(--orb-color-dark));
-  box-shadow:
-    0 0 calc(var(--orb-halo-strength) * 0.6px) rgba(96, 165, 250, 1),
-    0 0 80px rgba(0, 0, 0, 0.85);
-}
-
-/* ============================================================
-   18 — ESTADOS DEL ORB
-   ============================================================ */
-
-.orb-ready {
-  filter: brightness(1.25);
-  box-shadow:
-    0 0 50px rgba(96, 165, 250, 1),
-    inset 0 0 30px rgba(255, 255, 255, 0.25),
-    0 0 120px rgba(0, 0, 0, 0.85);
-}
-
-.orb-loading {
-  animation: orbLoading 0.45s infinite linear;
-  filter: brightness(1.6) saturate(1.4);
-  box-shadow:
-    0 0 70px rgba(96, 165, 250, 1),
-    inset 0 0 40px rgba(255, 255, 255, 0.25),
-    0 0 140px rgba(0, 0, 0, 0.85);
-}
-
-.orb-listening {
-  background: radial-gradient(circle at 30% 20%, #22c55e, #065f46);
-  box-shadow:
-    0 0 70px rgba(34, 197, 94, 1),
-    inset 0 0 40px rgba(255, 255, 255, 0.25),
-    0 0 140px rgba(0, 0, 0, 0.85);
-  animation: orbListeningPulse 0.7s infinite ease-in-out;
-}
-
-.orb-error {
-  background: radial-gradient(circle at 30% 20%, #ff4f6a, #7c0000);
-  box-shadow:
-    0 0 70px rgba(239, 68, 68, 1),
-    inset 0 0 40px rgba(255, 255, 255, 0.15),
-    0 0 140px rgba(0, 0, 0, 0.85);
-  animation: orbErrorPulse 0.8s infinite ease-in-out;
-}
-
-/* ============================================================
-   19 — ANIMACIONES ORB
-   ============================================================ */
-
-@keyframes orbBreath {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.06); filter: brightness(1.25); }
-  100% { transform: scale(1); filter: brightness(1); }
-}
-
-@keyframes orbRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes orbLoading {
-  0% { transform: scale(1) rotate(0deg); }
-  100% { transform: scale(1.05) rotate(360deg); }
-}
-
-@keyframes orbErrorPulse {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.05); filter: brightness(1.4); }
-  100% { transform: scale(1); filter: brightness(1); }
-}
-
-@keyframes orbListeningPulse {
-  0% { transform: scale(1); filter: brightness(1); }
-  50% { transform: scale(1.06); filter: brightness(1.5); }
-  100% { transform: scale(1); filter: brightness(1); }
-}
-
-/* ============================================================
-   20 — MODO DÍA (ORB)
-   ============================================================ */
-
-body.light-mode #orb-core.orb-ultra {
-  background: radial-gradient(circle at 30% 20%, #60a5fa, #3b82f6);
-  box-shadow:
-    0 0 calc(var(--orb-halo-strength) * 0.8px) #60a5fa,
-    inset 0 0 30px rgba(255, 255, 255, 0.25);
-}
-
-body.light-mode #orb-core.orb-ready {
-  filter: brightness(1.15);
-}
-
-body.light-mode #orb-core.orb-error {
-  background: radial-gradient(circle at 30% 20%, #ef4444, #7f1d1d);
-}
-
-body.light-mode #orb-core.orb-listening {
-  background: radial-gradient(circle at 30% 20%, #22c55e, #15803d);
-}
-/* ============================================================
    IA PRO ULTRA V6 — MÓDULO 5A
-   MÉTRICAS SUPERIORES
-   HUD EXTREMO A2 + B3 + C1
+   MÉTRICAS SUPERIORES (2 POR FILA, 50% ANCHO)
    ============================================================ */
 
 .metrics-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 6px;
 }
 
 .metric-card {
-  flex: 1;
-
-  /* HUD EXTREMO */
+  width: calc(50% - 5px); /* 2 por fila */
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-md);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
 
-  padding: 10px;
+  padding: 6px 8px; /* más bajo */
   text-align: center;
   cursor: pointer;
 
@@ -846,19 +650,19 @@ body.light-mode #orb-core.orb-listening {
 }
 
 .metric-label {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
 }
 
 .metric-value {
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-top: 4px;
+  margin-top: 2px;
 }
+
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 5B
    RESULTADOS (CARD PRINCIPAL)
-   HUD EXTREMO A2 + B3 + C1
    ============================================================ */
 
 .main-row {
@@ -867,7 +671,7 @@ body.light-mode #orb-core.orb-listening {
   align-items: flex-start;
 }
 
-/* CARD PRINCIPAL DE RESULTADOS */
+/* Resultados SIEMPRE visibles por defecto */
 .results-card {
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
@@ -938,7 +742,6 @@ body.light-mode #orb-core.orb-listening {
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 5C
    TARJETAS HOLOGRAMA (RESULT-ITEM)
-   HUD EXTREMO A2 + B3 + C1
    ============================================================ */
 
 .result-item {
@@ -948,7 +751,6 @@ body.light-mode #orb-core.orb-listening {
     rgba(15, 23, 42, 0.05)
   );
 
-  /* HUD EXTREMO */
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-md);
   backdrop-filter: blur(22px);
@@ -971,8 +773,6 @@ body.light-mode #orb-core.orb-listening {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-
-  /* Borde holográfico */
   border: 1px solid rgba(59, 130, 246, 0.35);
   opacity: 0;
   pointer-events: none;
@@ -986,9 +786,7 @@ body.light-mode #orb-core.orb-listening {
 .result-item:hover {
   border-color: var(--accent);
   transform: translateY(-1px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.95);
-
   background: linear-gradient(
     135deg,
     rgba(59, 130, 246, 0.18),
@@ -1019,10 +817,10 @@ body.light-mode #orb-core.orb-listening {
   font-size: 0.75rem;
   line-height: 1.3;
 }
+
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 5D
-   VISTA TABLA (TABLA-RESULTADOS + WRAPPER)
-   HUD EXTREMO A2 + B3 + C1
+   VISTA TABLA
    ============================================================ */
 
 .results-view-toggle {
@@ -1035,7 +833,6 @@ body.light-mode #orb-core.orb-listening {
   font-size: 0.75rem;
   border-radius: var(--radius-pill);
 
-  /* HUD EXTREMO */
   border: 1px solid rgba(59, 130, 246, 0.55);
   background: rgba(15, 23, 42, 0.18);
   backdrop-filter: blur(14px);
@@ -1056,20 +853,15 @@ body.light-mode #orb-core.orb-listening {
   box-shadow: 0 10px 25px rgba(37, 99, 235, 0.7);
 }
 
-/* WRAPPER DE TABLA */
 .tabla-wrapper {
   width: 100%;
   overflow-x: auto;
   padding-bottom: 6px;
-
-  /* Scrollbar moderno (Firefox) */
   scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
   scrollbar-width: thin;
-
-  position: relative; /* necesario para sombra lateral */
+  position: relative;
 }
 
-/* Scrollbar moderno (Chrome/Edge/Safari) */
 .tabla-wrapper::-webkit-scrollbar {
   height: 6px;
 }
@@ -1087,7 +879,6 @@ body.light-mode #orb-core.orb-listening {
   background: rgba(148, 163, 184, 0.55);
 }
 
-/* Indicador visual de desplazamiento */
 .tabla-wrapper::after {
   content: "";
   position: absolute;
@@ -1099,7 +890,6 @@ body.light-mode #orb-core.orb-listening {
   background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
 }
 
-/* TABLA */
 .tabla-resultados {
   width: 100%;
   border-collapse: separate;
@@ -1110,12 +900,9 @@ body.light-mode #orb-core.orb-listening {
 .tabla-resultados th,
 .tabla-resultados td {
   padding: 4px 8px;
-
-  /* HUD EXTREMO */
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
   border-radius: 6px;
   text-align: left;
   font-size: 0.8rem;
@@ -1125,128 +912,8 @@ body.light-mode #orb-core.orb-listening {
   color: var(--text-muted);
 }
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 5E
-   VISTA ARTÍCULO (DETALLE COMPLETO)
-   HUD EXTREMO A2 + B3 + C1
-   ============================================================ */
-
-/* CONTENEDOR PRINCIPAL DEL DETALLE */
-.detalle-card {
-  background: rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-
-  width: 340px;
-  flex-shrink: 0;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-}
-
-.detalle-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.detalle-sub {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  line-height: 1.3;
-}
-
-/* BLOQUES DE INFORMACIÓN */
-.detalle-block {
-  padding: 10px;
-  border-radius: var(--radius-md);
-
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.detalle-block-title {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.detalle-block-value {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-/* TÍTULOS DE SECCIÓN */
-.detalle-section-title {
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-/* TALLE / STOCK / COLOR */
-.detalle-talles,
-.detalle-stock,
-.detalle-color {
-  font-size: 0.78rem;
-  line-height: 1.3;
-}
-
-/* BOTÓN DE COPIAR */
-.btn-copy {
-  padding: 8px 12px;
-  border-radius: var(--radius-pill);
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(14px);
-
-  color: var(--text-main);
-  font-size: 0.78rem;
-  cursor: pointer;
-
-  transition: background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.btn-copy:hover {
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
-}
-
-/* MODO DÍA */
-body.light-mode .detalle-card {
-  background: #ffffffee !important;
-  border-color: #d1d5db !important;
-  color: #111 !important;
-}
-
-body.light-mode .detalle-block {
-  background: #ffffffdd !important;
-  border-color: #d1d5db !important;
-}
-
-body.light-mode .detalle-sub {
-  color: #4b5563 !important;
-}
-/* ============================================================
    IA PRO ULTRA V6 — MÓDULO 6A
    DASHBOARD (CARDS + GRID + ESTADÍSTICAS)
-   HUD EXTREMO A2 + B3 + C1
    ============================================================ */
 
 .dashboard-container {
@@ -1262,22 +929,17 @@ body.light-mode .detalle-sub {
   gap: 14px;
 }
 
-/* CARD BASE */
 .dashboard-card {
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
-
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-
   transition: transform var(--transition-fast),
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
@@ -1301,7 +963,6 @@ body.light-mode .detalle-sub {
   color: var(--text-muted);
 }
 
-/* ESTADÍSTICAS */
 .dashboard-stat {
   display: flex;
   flex-direction: column;
@@ -1319,7 +980,6 @@ body.light-mode .detalle-sub {
   color: var(--accent);
 }
 
-/* LISTA DE ITEMS */
 .dashboard-list {
   display: flex;
   flex-direction: column;
@@ -1329,18 +989,14 @@ body.light-mode .detalle-sub {
 .dashboard-list-item {
   padding: 8px 10px;
   border-radius: var(--radius-md);
-
   background: rgba(15, 23, 42, 0.12);
   border: 1px solid rgba(59, 130, 246, 0.35);
-
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   font-size: 0.78rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   transition: background var(--transition-fast),
     border-color var(--transition-fast),
     transform var(--transition-fast);
@@ -1351,30 +1007,25 @@ body.light-mode .detalle-sub {
   border-color: var(--accent);
   transform: translateY(-1px);
 }
+
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 6B
-   DASHBOARD (PANELES SECUNDARIOS + WIDGETS + MODO DÍA)
-   HUD EXTREMO A2 + B3 + C1
+   DASHBOARD SECUNDARIO + WIDGETS
    ============================================================ */
 
-/* PANEL SECUNDARIO */
 .dashboard-panel {
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
-
   padding: 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
 }
 
-/* WIDGETS */
 .widget-row {
   display: flex;
   gap: 10px;
@@ -1384,19 +1035,15 @@ body.light-mode .detalle-sub {
 .widget {
   flex: 1;
   min-width: 140px;
-
   background: rgba(15, 23, 42, 0.12);
   border: 1px solid rgba(59, 130, 246, 0.35);
   border-radius: var(--radius-md);
-
   padding: 10px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   display: flex;
   flex-direction: column;
   gap: 6px;
-
   transition: transform var(--transition-fast),
     border-color var(--transition-fast),
     background var(--transition-fast);
@@ -1418,30 +1065,23 @@ body.light-mode .detalle-sub {
   font-weight: 700;
 }
 
-/* MODO DÍA */
-body.light-mode .dashboard-card,
-body.light-mode .dashboard-panel,
-body.light-mode .widget {
-  background: #ffffffee !important;
-  border-color: #d1d5db !important;
-  color: #111 !important;
-}
-
-body.light-mode .dashboard-sub,
-body.light-mode .widget-label {
-  color: #4b5563 !important;
-}
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 7A
-   ADMIN PANEL (LISTAS + FILAS + ESTADOS)
-   HUD EXTREMO A2 + B3 + C1
+   PANEL ADMIN
    ============================================================ */
 
 .admin-panel {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 16px;
   margin-top: 14px;
+  background: rgba(15, 23, 42, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
 }
 
 .admin-title {
@@ -1454,7 +1094,6 @@ body.light-mode .widget-label {
   color: var(--text-muted);
 }
 
-/* LISTA PRINCIPAL */
 .admin-list {
   display: flex;
   flex-direction: column;
@@ -1464,17 +1103,13 @@ body.light-mode .widget-label {
 .admin-item {
   padding: 12px;
   border-radius: var(--radius-md);
-
   background: rgba(15, 23, 42, 0.12);
   border: 1px solid rgba(59, 130, 246, 0.35);
-
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   transition: background var(--transition-fast),
     border-color var(--transition-fast),
     transform var(--transition-fast);
@@ -1496,26 +1131,13 @@ body.light-mode .widget-label {
   color: var(--text-muted);
 }
 
-/* ESTADOS */
-.admin-item.ok {
-  border-color: #22c55e;
-}
+.admin-item.ok { border-color: #22c55e; }
+.admin-item.warn { border-color: #f59e0b; }
+.admin-item.error { border-color: #ef4444; }
 
-.admin-item.warn {
-  border-color: #f59e0b;
-}
-
-.admin-item.error {
-  border-color: #ef4444;
-}
 /* ============================================================
    IA PRO ULTRA V6 — MÓDULO 8A
    SCANNER + HELP MODAL + FILTROS
-   HUD EXTREMO A2 + B3 + C1
-   ============================================================ */
-
-/* ============================================================
-   SCANNER
    ============================================================ */
 
 .scanner-card {
@@ -1523,14 +1145,11 @@ body.light-mode .widget-label {
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
   padding: 16px;
-
   display: flex;
   flex-direction: column;
   gap: 12px;
-
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
 }
 
@@ -1548,17 +1167,13 @@ body.light-mode .widget-label {
   width: 100%;
   height: 260px;
   border-radius: var(--radius-md);
-
   background: rgba(15, 23, 42, 0.12);
   border: 1px solid rgba(59, 130, 246, 0.35);
-
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--text-muted);
   font-size: 0.85rem;
 }
@@ -1566,15 +1181,12 @@ body.light-mode .widget-label {
 .scanner-btn {
   padding: 10px 14px;
   border-radius: var(--radius-pill);
-
   border: 1px solid rgba(59, 130, 246, 0.55);
   background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(14px);
-
   color: var(--text-main);
   font-size: 0.85rem;
   cursor: pointer;
-
   transition: background var(--transition-fast),
     border-color var(--transition-fast),
     transform var(--transition-fast),
@@ -1589,38 +1201,27 @@ body.light-mode .widget-label {
 }
 
 /* ============================================================
-   HELP MODAL
+   HELP MODAL (SIN OVERLAY OSCURO)
    ============================================================ */
 
-.help-overlay {
+#help-modal {
   position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 99999;
-}
-
-.help-modal {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 90%;
   max-width: 420px;
-
   background: rgba(15, 23, 42, 0.18);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
-
   padding: 20px;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 14px;
-
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
+  z-index: 99999;
 }
 
 .help-title {
@@ -1637,15 +1238,12 @@ body.light-mode .widget-label {
 .help-close {
   padding: 8px 12px;
   border-radius: var(--radius-pill);
-
   border: 1px solid rgba(59, 130, 246, 0.55);
   background: rgba(15, 23, 42, 0.35);
   backdrop-filter: blur(14px);
-
   color: var(--text-main);
   font-size: 0.85rem;
   cursor: pointer;
-
   transition: background var(--transition-fast),
     border-color var(--transition-fast),
     transform var(--transition-fast),
@@ -1663,19 +1261,16 @@ body.light-mode .widget-label {
    FILTROS PANEL
    ============================================================ */
 
-.filtros-panel {
+#filtros-panel {
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
-
   padding: 16px;
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 12px;
-
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
 }
 
@@ -1693,13 +1288,10 @@ body.light-mode .widget-label {
 .filtro-input {
   padding: 10px 12px;
   border-radius: var(--radius-md);
-
   background: rgba(15, 23, 42, 0.18);
   border: 1px solid rgba(59, 130, 246, 0.45);
-
   color: var(--text-main);
   font-size: 0.85rem;
-
   transition: border-color var(--transition-fast),
     background var(--transition-fast),
     box-shadow var(--transition-fast);
@@ -1711,10 +1303,6 @@ body.light-mode .widget-label {
   background: rgba(15, 23, 42, 0.95);
   box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.6);
 }
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 8B
-   FOOTER + RESPONSIVE + OVERRIDES HUD EXTREMO
-   ============================================================ */
 
 /* ============================================================
    FOOTER
@@ -1744,7 +1332,11 @@ body.light-mode .widget-label {
 
 @media (max-width: 600px) {
   .metrics-row {
-    flex-direction: column;
+    flex-wrap: wrap;
+  }
+
+  .metric-card {
+    width: calc(50% - 5px);
   }
 
   .search-actions-row {
@@ -1761,7 +1353,7 @@ body.light-mode .widget-label {
 }
 
 /* ============================================================
-   OVERRIDES HUD EXTREMO (A2 + B3 + C1)
+   OVERRIDES HUD EXTREMO
    ============================================================ */
 
 .hud-glow {
