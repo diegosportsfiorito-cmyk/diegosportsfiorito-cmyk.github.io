@@ -1,109 +1,117 @@
-/* ============================================================
-   SERVICE WORKER — CACHE AVANZADO + SISTEMA DE ACTUALIZACIÓN
-   (VERSIÓN CORREGIDA — NO ROMPE FONDO NI GLASS)
-   ============================================================ */
+// ============================================================
+// IA PRO ULTRA — SERVICE WORKER V4
+// Cache estático + runtime, sin errores de clone()
+// ============================================================
 
-// Cambiá este valor en cada release
-const CACHE_VERSION = "stock-ia-v13-2026-02-27";
-const CACHE_NAME = CACHE_VERSION;
+const CACHE_VERSION = "v4-20260228";
+const STATIC_CACHE = `ia-pro-ultra-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `ia-pro-ultra-runtime-${CACHE_VERSION}`;
 
-// Archivos estáticos REALES (sin querystring)
-const ASSETS = [
+// Ajustá esta lista según tus assets reales
+const STATIC_ASSETS = [
   "/",
   "/index.html",
-  // NO cacheamos el CSS principal para evitar versiones viejas
-  // "/styles_v2.css",
-  "/scanner.css",
-  "/scanner_v7_barcodeDetector.js",
-  "/app_core_v4.js",
-  "/ui_engine_v4.js",
-  "/orb_engine_v2.js",
-  "/dashboard_engine.js",
-  "/indicators_engine.js",
-  "/orb_admin_engine.js",
-  "/icons/icon-192-safe.png",
-  "/icons/icon-512-safe.png",
-  "/icons/icon-ios.png"
+  "/app.js",
+  "/styles_v2.css",
+  "/img/bg-quantum-blur.png",
+  "/img/bg-quantum-foreground.png",
+  "/img/icon-192.png",
+  "/img/icon-512.png",
 ];
 
-// INSTALL — precache
-self.addEventListener("install", (event) => {
+// ============================================================
+// INSTALL — Precarga de assets estáticos
+// ============================================================
+
+self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(STATIC_CACHE).then(cache => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
 });
 
-// ACTIVATE — limpiar versiones viejas
-self.addEventListener("activate", (event) => {
+// ============================================================
+// ACTIVATE — Limpieza de caches viejos
+// ============================================================
+
+self.addEventListener("activate", event => {
   event.waitUntil(
-    caches.keys().then((keys) =>
+    caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter((k) => k !== CACHE_NAME)
-          .map((k) => caches.delete(k))
+          .filter(key => key !== STATIC_CACHE && key !== RUNTIME_CACHE)
+          .map(key => caches.delete(key))
       )
     )
   );
   self.clients.claim();
 });
 
-// FETCH — Cache First para assets, Network First para HTML/JS
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
+// ============================================================
+// FETCH — Estrategia:
+//  - HTML: network-first con fallback a cache
+//  - Otros: cache-first con fallback a network
+// ============================================================
 
-  // Nunca cachear cámara/video
-  if (
-    req.url.startsWith("blob:") ||
-    req.destination === "video" ||
-    req.destination === "media"
-  ) {
+self.addEventListener("fetch", event => {
+  const { request } = event;
+
+  // Ignorar requests de otros protocolos
+  if (request.method !== "GET" || !request.url.startsWith(self.location.origin)) {
     return;
   }
 
-  // HTML SIEMPRE desde la red
-  if (req.destination === "document") {
-    event.respondWith(
-      fetch(req).catch(() => caches.match("/index.html"))
-    );
+  // HTML / navegación → network-first
+  if (request.mode === "navigate" || request.headers.get("accept")?.includes("text/html")) {
+    event.respondWith(handleHTMLRequest(request));
     return;
   }
 
-  // JS dinámico SIEMPRE desde la red
-  if (req.destination === "script") {
-    event.respondWith(
-      fetch(req).catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  // CSS principal SIEMPRE desde la red (para evitar cache viejo)
-  if (req.destination === "style") {
-    event.respondWith(fetch(req));
-    return;
-  }
-
-  // Resto de assets estáticos → Cache First
-  event.respondWith(
-    caches.match(req).then((cached) => {
-      return (
-        cached ||
-        fetch(req).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(req, networkResponse.clone());
-            });
-          }
-          return networkResponse;
-        })
-      );
-    })
-  );
+  // Otros recursos → cache-first
+  event.respondWith(handleAssetRequest(request));
 });
 
-// MENSAJES DESDE LA APP (para skipWaiting)
-self.addEventListener("message", (event) => {
-  if (event.data && event.data.action === "skipWaiting") {
-    self.skipWaiting();
+// ============================================================
+// HANDLERS
+// ============================================================
+
+async function handleHTMLRequest(request) {
+  const cache = await caches.open(STATIC_CACHE);
+
+  try {
+    const networkResponse = await fetch(request);
+    // Clonamos ANTES de usar
+    cache.put(request, networkResponse.clone());
+    return networkResponse;
+  } catch (err) {
+    const cached = await cache.match(request);
+    if (cached) return cached;
+
+    // Fallback a index.html si no hay cache específico
+    const fallback = await cache.match("/index.html");
+    return fallback || Response.error();
   }
-});
+}
+
+async function handleAssetRequest(request) {
+  const staticCache = await caches.open(STATIC_CACHE);
+  const runtimeCache = await caches.open(RUNTIME_CACHE);
+
+  // 1) Intentar cache estático
+  const cachedStatic = await staticCache.match(request);
+  if (cachedStatic) return cachedStatic;
+
+  // 2) Intentar cache runtime
+  const cachedRuntime = await runtimeCache.match(request);
+  if (cachedRuntime) return cachedRuntime;
+
+  // 3) Network + guardar en runtime
+  try {
+    const networkResponse = await fetch(request);
+    // Clonamos ANTES de usar
+    runtimeCache.put(request, networkResponse.clone());
+    return networkResponse;
+  } catch (err) {
+    return Response.error();
+  }
+}
