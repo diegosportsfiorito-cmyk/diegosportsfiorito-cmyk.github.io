@@ -1,6 +1,6 @@
 // ============================================================
-// APP CORE — Motor inteligente + warm-up + indicador visual
-// Versión refactorizada premium 2026-02-24 (con fixes AbortError)
+// APP CORE V5 — Motor inteligente + warm-up + indicadores
+// Versión 2026-03-02 (corregida, estable, compatible con SW V5)
 // ============================================================
 
 const AppCore = {
@@ -27,7 +27,6 @@ const AppCore = {
     filtroTalleDesde: document.getElementById("filtro-talle-desde"),
     filtroTalleHasta: document.getElementById("filtro-talle-hasta"),
 
-    // NUEVO: filtro de unidades
     filtroUnidadesDesde: document.getElementById("filtro-unidades-desde"),
     filtroUnidadesHasta: document.getElementById("filtro-unidades-hasta"),
 
@@ -43,14 +42,10 @@ const AppCore = {
 
     metricArticulos: document.getElementById("metric-articulos-value"),
     metricPares: document.getElementById("metric-pares-value"),
-    metricAlertasNegativos: document.getElementById(
-      "metric-alertas-negativos-value"
-    ),
+    metricAlertasNegativos: document.getElementById("metric-alertas-negativos-value"),
     metricAlertasCero: document.getElementById("metric-alertas-cero-value"),
     metricValorizado: document.getElementById("metric-valorizado-value"),
-    metricUltimaUnidad: document.getElementById(
-      "metric-ultima-unidad-value"
-    ),
+    metricUltimaUnidad: document.getElementById("metric-ultima-unidad-value"),
 
     connectionDot: document.getElementById("connection-dot"),
 
@@ -86,7 +81,7 @@ const AppCore = {
   },
 
   // ==========================================================
-  // UTILIDADES BÁSICAS
+  // UTILIDADES
   // ==========================================================
   normalizarCampo(v) {
     if (!v && v !== 0) return "—";
@@ -176,206 +171,9 @@ const AppCore = {
       stock_negativo: stockNegativo,
     };
   },
-
-  // ==========================================================
-  // AUTOCOMPLETE
-  // ==========================================================
-  getAutocompleteSuggestions(term) {
-    const q = this.normalizarTexto(term);
-    if (!q || !this.state.catalogItems.length) return [];
-
-    const exactArticulo = [];
-    const exactMarca = [];
-    const exactRubro = [];
-    const exactDescripcion = [];
-
-    const prefijoArticulo = [];
-    const prefijoMarca = [];
-    const prefijoRubro = [];
-    const prefijoDescripcion = [];
-
-    const parcialArticulo = [];
-    const parcialMarca = [];
-    const parcialRubro = [];
-    const parcialDescripcion = [];
-
-    const pushUnique = (arr, value) => {
-      if (!value) return;
-      if (!arr.includes(value)) arr.push(value);
-    };
-
-    this.state.catalogItems.forEach((item) => {
-      const descRaw = item.descripcion || "";
-      const marcaRaw = item.marca || "";
-      const rubroRaw = item.rubro || "";
-      const codigoRaw = item.codigo || "";
-
-      const descN = this.normalizarTexto(descRaw);
-      const marcaN = this.normalizarTexto(marcaRaw);
-      const rubroN = this.normalizarTexto(rubroRaw);
-      const codigoN = this.normalizarTexto(codigoRaw);
-
-      const startsWith = (txt) => txt && txt.startsWith(q);
-      const contains = (txt) => txt && txt.includes(q);
-
-      if (codigoN === q || descN === q)
-        pushUnique(exactArticulo, descRaw || codigoRaw);
-      else if (startsWith(codigoN) || startsWith(descN))
-        pushUnique(prefijoArticulo, descRaw || codigoRaw);
-      else if (contains(codigoN) || contains(descN))
-        pushUnique(parcialArticulo, descRaw || codigoRaw);
-
-      if (marcaN) {
-        if (marcaN === q) pushUnique(exactMarca, marcaRaw);
-        else if (startsWith(marcaN)) pushUnique(prefijoMarca, marcaRaw);
-        else if (contains(marcaN)) pushUnique(parcialMarca, marcaRaw);
-      }
-
-      if (rubroN) {
-        if (rubroN === q) pushUnique(exactRubro, rubroRaw);
-        else if (startsWith(rubroN)) pushUnique(prefijoRubro, rubroRaw);
-        else if (contains(rubroN)) pushUnique(parcialRubro, rubroRaw);
-      }
-
-      if (descN) {
-        if (descN === q) pushUnique(exactDescripcion, descRaw);
-        else if (startsWith(descN)) pushUnique(prefijoDescripcion, descRaw);
-        else if (contains(descN)) pushUnique(parcialDescripcion, descRaw);
-      }
-    });
-
-    const ordered = [
-      ...exactArticulo,
-      ...exactMarca,
-      ...exactRubro,
-      ...exactDescripcion,
-      ...prefijoArticulo,
-      ...prefijoMarca,
-      ...prefijoRubro,
-      ...prefijoDescripcion,
-      ...parcialArticulo,
-      ...parcialMarca,
-      ...parcialRubro,
-      ...parcialDescripcion,
-    ];
-
-    const final = [];
-    const seen = new Set();
-    for (const v of ordered) {
-      if (!v) continue;
-      if (seen.has(v)) continue;
-      seen.add(v);
-      final.push(v);
-      if (final.length >= 12) break;
-    }
-
-    return final;
-  },
-
-  // ==========================================================
-  // WARM-UP + CARGA CATÁLOGO
-  // ==========================================================
-  async pingBackend() {
-    this.setSearchStatus("Activando servidor…", "orange");
-    this.setConnectionStatus(false);
-
-    try {
-      const res = await fetch(this.config.backendUrl + "/ping");
-      if (!res.ok) throw new Error();
-
-      this.setSearchStatus("Conectado", "green");
-      this.setConnectionStatus(true);
-      this.state.warmingUp = false;
-      return true;
-    } catch {
-      this.setSearchStatus("Activando servidor…", "orange");
-      return false;
-    }
-  },
-
-  async warmUpLoop() {
-    // FIX: si hay una búsqueda activa, no interferir
-    if (this.state.currentAbort) return;
-
-    const ok = await this.pingBackend();
-    if (!ok) {
-      clearTimeout(this.state.retryTimeout);
-      this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
-      return;
-    }
-    this.cargarCatalogo();
-  },
-
-  async cargarCatalogo() {
-    this.setSearchStatus("Cargando catálogo…", "blue");
-
-    try {
-      const res = await fetch(this.config.backendUrl + "/catalog");
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-
-      this.state.catalogItems = data.items || [];
-
-      if (data.resumen) this.state.resumenCatalogo = data.resumen;
-      else
-        this.state.resumenCatalogo = this.calcularResumenLocal(
-          this.state.catalogItems
-        );
-
-      const r = this.state.resumenCatalogo || {};
-
-      if (this.els.fuenteArchivo)
-        this.els.fuenteArchivo.textContent = r.archivo || "—";
-      if (this.els.fuenteFecha)
-        this.els.fuenteFecha.textContent = r.fecha || "—";
-      if (this.els.fuenteMarcas)
-        this.els.fuenteMarcas.textContent = r.marcas ?? "—";
-      if (this.els.fuenteRubros)
-        this.els.fuenteRubros.textContent = r.rubros ?? "—";
-      if (this.els.fuenteArticulos)
-        this.els.fuenteArticulos.textContent = r.articulos ?? "—";
-      if (this.els.fuenteStockTotal)
-        this.els.fuenteStockTotal.textContent = r.stock_total ?? "—";
-      if (this.els.fuenteStockNegativo)
-        this.els.fuenteStockNegativo.textContent =
-          r.stock_negativo ?? "—";
-
-      this.poblarFiltros();
-
-      this.setConnectionStatus(true);
-      this.setSearchStatus("Conectado", "green");
-    } catch {
-      this.setConnectionStatus(false);
-      this.setSearchStatus("Error de conexión", "red");
-
-      clearTimeout(this.state.retryTimeout);
-      this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
-    }
-  },
-
-  poblarFiltros() {
-    const marcas = new Set();
-    const rubros = new Set();
-
-    this.state.catalogItems.forEach((i) => {
-      if (i.marca) marcas.add(i.marca);
-      if (i.rubro) rubros.add(i.rubro);
-    });
-
-    if (this.els.filtroMarca)
-      this.els.filtroMarca.innerHTML =
-        `<option value="">Marca</option>` +
-        [...marcas].sort().map((m) => `<option>${m}</option>`).join("");
-
-    if (this.els.filtroRubro)
-      this.els.filtroRubro.innerHTML =
-        `<option value="">Rubro</option>` +
-        [...rubros].sort().map((r) => `<option>${r}</option>`).join("");
-  },
 };
 // ============================================================
-// PARSER INTELIGENTE
+// PARSER INTELIGENTE (corregido, estable)
 // ============================================================
 AppCore.interpretarQuery = function (raw) {
   const q = this.limpiarInput(raw);
@@ -405,7 +203,7 @@ AppCore.interpretarQuery = function (raw) {
     if (tokens.includes(r)) rubro = mapRubros.get(r);
   }
 
-  // RANGO DE TALLES (ej: 38-42, 38 a 42, T38/42)
+  // RANGO DE TALLES (ej: 38-42)
   const matchRango = qUpper.match(/T?(\d+)\s*(?:A|-|\/)\s*T?(\d+)/);
   if (matchRango) {
     return {
@@ -416,11 +214,11 @@ AppCore.interpretarQuery = function (raw) {
       talleHasta: parseInt(matchRango[2]),
       soloUltimo: false,
       soloNegativo: false,
-      question: "",
+      question: q,
     };
   }
 
-  // TALLE ÚNICO (ej: 40, T40)
+  // TALLE ÚNICO (ej: 40)
   const matchTalle = qUpper.match(/^T?(\d{1,3})$/);
   if (matchTalle) {
     const t = parseInt(matchTalle[1]);
@@ -432,11 +230,11 @@ AppCore.interpretarQuery = function (raw) {
       talleHasta: t,
       soloUltimo: false,
       soloNegativo: false,
-      question: "",
+      question: q,
     };
   }
 
-  // PRECIO (ej: $50000, P50000)
+  // PRECIO (ej: $50000)
   const matchPrecio = qUpper.match(/^(?:P|\$)?(\d{2,6})$/);
   if (matchPrecio) {
     return {
@@ -451,7 +249,7 @@ AppCore.interpretarQuery = function (raw) {
     };
   }
 
-  // CÓDIGO numérico largo (ej: 12345678)
+  // CÓDIGO numérico largo
   if (/^\d[\d\- ]{6,14}\d$/.test(qUpper)) {
     return {
       filtros_globales: false,
@@ -478,7 +276,7 @@ AppCore.interpretarQuery = function (raw) {
       talleHasta: null,
       soloUltimo: esUltimo,
       soloNegativo: esNegativo,
-      question: "",
+      question: q,
     };
   }
 
@@ -505,13 +303,12 @@ AppCore.interpretarQuery = function (raw) {
     talleHasta: null,
     soloUltimo: false,
     soloNegativo: false,
-    // Siempre mandamos el texto limpio como 
-    question question: q,
+    question: q, // SIEMPRE enviamos texto
   };
 };
 
 // ============================================================
-// BÚSQUEDA PRINCIPAL (FIX AbortError)
+// BÚSQUEDA PRINCIPAL (corregida, estable)
 // ============================================================
 AppCore.buscar = async function () {
   const raw = this.els.searchInput?.value || "";
@@ -576,10 +373,7 @@ AppCore.buscar = async function () {
       this.speakResultados();
     }
   } catch (err) {
-    if (err.name === "AbortError") {
-      // No mostrar error: es un aborto normal por nueva búsqueda / warm-up
-      return;
-    }
+    if (err.name === "AbortError") return;
 
     this.setConnectionStatus(false);
     ORB.setError?.(true);
@@ -596,121 +390,169 @@ AppCore.buscar = async function () {
 };
 
 // ============================================================
-// BÚSQUEDA POR FILTROS (incluye unidades + FIX AbortError)
+// WARM-UP + CARGA CATÁLOGO
 // ============================================================
-AppCore.actualizarFiltrosDesdeUI = function () {
-  this.state.filtros.marca = this.els.filtroMarca?.value || null;
-  this.state.filtros.rubro = this.els.filtroRubro?.value || null;
-  this.state.filtros.talleDesde = this.els.filtroTalleDesde?.value || null;
-  this.state.filtros.talleHasta = this.els.filtroTalleHasta?.value || null;
-
-  this.state.filtros.unidadesDesde =
-    this.els.filtroUnidadesDesde?.value || null;
-  this.state.filtros.unidadesHasta =
-    this.els.filtroUnidadesHasta?.value || null;
-};
-
-AppCore.filtrarPorUnidadesLocal = function (items) {
-  const desdeRaw = this.state.filtros.unidadesDesde;
-  const hastaRaw = this.state.filtros.unidadesHasta;
-
-  if (!desdeRaw && !hastaRaw) return items;
-
-  const desde = desdeRaw ? parseInt(desdeRaw, 10) : null;
-  const hasta = hastaRaw ? parseInt(hastaRaw, 10) : null;
-
-  if (!desde && !hasta) return items;
-
-  return (items || []).filter((it) => {
-    const total = (it.talles || []).reduce(
-      (acc, t) => acc + Number(t.stock || 0),
-      0
-    );
-
-    if (desde !== null && total < desde) return false;
-    if (hasta !== null && total > hasta) return false;
-    return true;
-  });
-};
-
-AppCore.buscarPorFiltros = async function () {
-  this.actualizarFiltrosDesdeUI();
-
-  const body = {
-    question: "",
-    filtros_globales: true,
-    marca: this.state.filtros.marca || null,
-    rubro: this.state.filtros.rubro || null,
-    talleDesde: this.state.filtros.talleDesde
-      ? parseInt(this.state.filtros.talleDesde)
-      : null,
-    talleHasta: this.state.filtros.talleHasta
-      ? parseInt(this.state.filtros.talleHasta)
-      : null,
-    soloUltimo: false,
-    soloNegativo: false,
-    solo_stock: this.els.chkSoloStock?.checked || false,
-
-    // Se envían por si el backend los soporta (no rompe si los ignora)
-    unidadesDesde: this.state.filtros.unidadesDesde
-      ? parseInt(this.state.filtros.unidadesDesde)
-      : null,
-    unidadesHasta: this.state.filtros.unidadesHasta
-      ? parseInt(this.state.filtros.unidadesHasta)
-      : null,
-  };
-
-  if (this.state.currentAbort) this.state.currentAbort.abort();
-  this.state.currentAbort = new AbortController();
-
-  this.setSearchStatus("Buscando…", "blue");
-  ORB.setLoading?.(true);
-
-  if (this.els.resultsStatus)
-    this.els.resultsStatus.textContent = "Buscando…";
+AppCore.pingBackend = async function () {
+  this.setSearchStatus("Activando servidor…", "orange");
+  this.setConnectionStatus(false);
 
   try {
-    const res = await fetch(this.config.backendUrl + "/query", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: this.state.currentAbort.signal,
-    });
-
+    const res = await fetch(this.config.backendUrl + "/ping");
     if (!res.ok) throw new Error();
 
-    let items = (await res.json()).items || [];
+    this.setSearchStatus("Conectado", "green");
+    this.setConnectionStatus(true);
+    this.state.warmingUp = false;
+    return true;
+  } catch {
+    this.setSearchStatus("Activando servidor…", "orange");
+    return false;
+  }
+};
 
-    // Filtro de unidades aplicado SIEMPRE en frontend
-    items = this.filtrarPorUnidadesLocal(items);
+AppCore.warmUpLoop = async function () {
+  if (this.state.currentAbort) return;
 
-    this.state.items = items;
+  const ok = await this.pingBackend();
+  if (!ok) {
+    clearTimeout(this.state.retryTimeout);
+    this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
+    return;
+  }
 
-    this.renderResultados(items);
-    window.actualizarDashboard?.(items);
-    this.actualizarIndicadores(items);
+  this.cargarCatalogo();
+};
+
+AppCore.cargarCatalogo = async function () {
+  this.setSearchStatus("Cargando catálogo…", "blue");
+
+  try {
+    const res = await fetch(this.config.backendUrl + "/catalog");
+    if (!res.ok) throw new Error();
+
+    const data = await res.json();
+
+    this.state.catalogItems = data.items || [];
+
+    if (data.resumen) this.state.resumenCatalogo = data.resumen;
+    else this.state.resumenCatalogo = this.calcularResumenLocal(this.state.catalogItems);
+
+    const r = this.state.resumenCatalogo || {};
+
+    if (this.els.fuenteArchivo) this.els.fuenteArchivo.textContent = r.archivo || "—";
+    if (this.els.fuenteFecha) this.els.fuenteFecha.textContent = r.fecha || "—";
+    if (this.els.fuenteMarcas) this.els.fuenteMarcas.textContent = r.marcas ?? "—";
+    if (this.els.fuenteRubros) this.els.fuenteRubros.textContent = r.rubros ?? "—";
+    if (this.els.fuenteArticulos) this.els.fuenteArticulos.textContent = r.articulos ?? "—";
+    if (this.els.fuenteStockTotal) this.els.fuenteStockTotal.textContent = r.stock_total ?? "—";
+    if (this.els.fuenteStockNegativo) this.els.fuenteStockNegativo.textContent = r.stock_negativo ?? "—";
+
+    this.poblarFiltros();
 
     this.setConnectionStatus(true);
-    this.setOrbIdle();
     this.setSearchStatus("Conectado", "green");
-
-    if (this.els.resultsStatus)
-      this.els.resultsStatus.textContent = `${items.length} resultados`;
-  } catch (err) {
-    if (err.name === "AbortError") {
-      // No mostrar error: es un aborto normal
-      return;
-    }
-
+  } catch {
     this.setConnectionStatus(false);
-    ORB.setError?.(true);
     this.setSearchStatus("Error de conexión", "red");
 
-    if (this.els.resultsStatus)
-      this.els.resultsStatus.textContent = "Error de conexión";
-  } finally {
-    ORB.setLoading?.(false);
+    clearTimeout(this.state.retryTimeout);
+    this.state.retryTimeout = setTimeout(() => this.warmUpLoop(), 2000);
   }
+};
+
+// ============================================================
+// AUTOCOMPLETE
+// ============================================================
+AppCore.getAutocompleteSuggestions = function (term) {
+  const q = this.normalizarTexto(term);
+  if (!q || !this.state.catalogItems.length) return [];
+
+  const exactArticulo = [];
+  const exactMarca = [];
+  const exactRubro = [];
+  const exactDescripcion = [];
+
+  const prefijoArticulo = [];
+  const prefijoMarca = [];
+  const prefijoRubro = [];
+  const prefijoDescripcion = [];
+
+  const parcialArticulo = [];
+  const parcialMarca = [];
+  const parcialRubro = [];
+  const parcialDescripcion = [];
+
+  const pushUnique = (arr, value) => {
+    if (!value) return;
+    if (!arr.includes(value)) arr.push(value);
+  };
+
+  this.state.catalogItems.forEach((item) => {
+    const descRaw = item.descripcion || "";
+    const marcaRaw = item.marca || "";
+    const rubroRaw = item.rubro || "";
+    const codigoRaw = item.codigo || "";
+
+    const descN = this.normalizarTexto(descRaw);
+    const marcaN = this.normalizarTexto(marcaRaw);
+    const rubroN = this.normalizarTexto(rubroRaw);
+    const codigoN = this.normalizarTexto(codigoRaw);
+
+    const startsWith = (txt) => txt && txt.startsWith(q);
+    const contains = (txt) => txt && txt.includes(q);
+
+    if (codigoN === q || descN === q)
+      pushUnique(exactArticulo, descRaw || codigoRaw);
+    else if (startsWith(codigoN) || startsWith(descN))
+      pushUnique(prefijoArticulo, descRaw || codigoRaw);
+    else if (contains(codigoN) || contains(descN))
+      pushUnique(parcialArticulo, descRaw || codigoRaw);
+
+    if (marcaN) {
+      if (marcaN === q) pushUnique(exactMarca, marcaRaw);
+      else if (startsWith(marcaN)) pushUnique(prefijoMarca, marcaRaw);
+      else if (contains(marcaN)) pushUnique(parcialMarca, marcaRaw);
+    }
+
+    if (rubroN) {
+      if (rubroN === q) pushUnique(exactRubro, rubroRaw);
+      else if (startsWith(rubroN)) pushUnique(prefijoRubro, rubroRaw);
+      else if (contains(rubroN)) pushUnique(parcialRubro, rubroRaw);
+    }
+
+    if (descN) {
+      if (descN === q) pushUnique(exactDescripcion, descRaw);
+      else if (startsWith(descN)) pushUnique(prefijoDescripcion, descRaw);
+      else if (contains(descN)) pushUnique(parcialDescripcion, descRaw);
+    }
+  });
+
+  const ordered = [
+    ...exactArticulo,
+    ...exactMarca,
+    ...exactRubro,
+    ...exactDescripcion,
+    ...prefijoArticulo,
+    ...prefijoMarca,
+    ...prefijoRubro,
+    ...prefijoDescripcion,
+    ...parcialArticulo,
+    ...parcialMarca,
+    ...parcialRubro,
+    ...parcialDescripcion,
+  ];
+
+  const final = [];
+  const seen = new Set();
+  for (const v of ordered) {
+    if (!v) continue;
+    if (seen.has(v)) continue;
+    seen.add(v);
+    final.push(v);
+    if (final.length >= 12) break;
+  }
+
+  return final;
 };
 // ============================================================
 // RENDER RESULTADOS (3 VISTAS)
@@ -736,7 +578,7 @@ AppCore.renderResultados = function (items) {
 };
 
 // ============================================================
-// VISTA TABLA (scroll horizontal + filas compactas)
+// VISTA TABLA
 // ============================================================
 AppCore.renderVistaTabla = function (items) {
   const container = this.els.vistaTabla;
@@ -758,7 +600,7 @@ AppCore.renderVistaTabla = function (items) {
           </tr>
         </thead>
         <tbody>
- `;
+  `;
 
   items.forEach((item) => {
     const talles = (item.talles || [])
@@ -802,9 +644,7 @@ AppCore.renderVistaTarjeta = function (items) {
 
     div.innerHTML = `
       <div class="result-title">
-        ${this.normalizarCampo(item.codigo)} — ${this.normalizarCampo(
-      item.descripcion
-    )}
+        ${this.normalizarCampo(item.codigo)} — ${this.normalizarCampo(item.descripcion)}
       </div>
 
       <div class="result-sub">
@@ -813,9 +653,7 @@ AppCore.renderVistaTarjeta = function (items) {
         Color: ${this.normalizarCampo(item.color)}
       </div>
 
-      <div class="result-precio">Precio: $${this.formatNumber(
-        item.precio
-      )}</div>
+      <div class="result-precio">Precio: $${this.formatNumber(item.precio)}</div>
       <div class="result-talles">${talles}</div>
 
       <div class="result-sub">
@@ -847,12 +685,8 @@ AppCore.renderVistaArticulo = function (items) {
     if (!talles.length) {
       html += `
         <div class="detalle-header">
-          <h2>${this.normalizarCampo(base.codigo)} — ${this.normalizarCampo(
-        base.descripcion
-      )}</h2>
-          <p>${this.normalizarCampo(base.marca)} / ${this.normalizarCampo(
-        base.rubro
-      )}</p>
+          <h2>${this.normalizarCampo(base.codigo)} — ${this.normalizarCampo(base.descripcion)}</h2>
+          <p>${this.normalizarCampo(base.marca)} / ${this.normalizarCampo(base.rubro)}</p>
         </div>
 
         <div class="results-empty">Este artículo no tiene talles detallados.</div>
@@ -886,12 +720,8 @@ AppCore.renderVistaArticulo = function (items) {
 
     html += `
       <div class="detalle-header">
-        <h2>${this.normalizarCampo(base.codigo)} — ${this.normalizarCampo(
-      base.descripcion
-    )}</h2>
-        <p>${this.normalizarCampo(base.marca)} / ${this.normalizarCampo(
-      base.rubro
-    )}</p>
+        <h2>${this.normalizarCampo(base.codigo)} — ${this.normalizarCampo(base.descripcion)}</h2>
+        <p>${this.normalizarCampo(base.marca)} / ${this.normalizarCampo(base.rubro)}</p>
       </div>
 
       <table class="tabla-talles">
@@ -957,20 +787,18 @@ AppCore.actualizarIndicadores = function (items) {
     this.els.metricPares.textContent = this.formatNumber(pares);
 
   if (this.els.metricAlertasNegativos)
-    this.els.metricAlertasNegativos.textContent =
-      this.formatNumber(stockNegativo);
+    this.els.metricAlertasNegativos.textContent = this.formatNumber(stockNegativo);
 
   if (this.els.metricAlertasCero)
     this.els.metricAlertasCero.textContent = this.formatNumber(sinStock);
 
   if (this.els.metricValorizado)
-    this.els.metricValorizado.textContent =
-      "$" + this.formatNumber(valorizadoTotal);
+    this.els.metricValorizado.textContent = "$" + this.formatNumber(valorizadoTotal);
 
   if (this.els.metricUltimaUnidad)
-    this.els.metricUltimaUnidad.textContent =
-      this.formatNumber(ultimaUnidad);
+    this.els.metricUltimaUnidad.textContent = this.formatNumber(ultimaUnidad);
 };
+
 // ============================================================
 // COPIAR RESULTADOS
 // ============================================================
@@ -1050,9 +878,121 @@ AppCore.limpiarPantalla = function () {
   this.setOrbIdle();
   this.setSearchStatus("Listo", "blue");
 };
+// ============================================================
+// BÚSQUEDA POR FILTROS (incluye unidades + FIX AbortError)
+// ============================================================
+AppCore.actualizarFiltrosDesdeUI = function () {
+  this.state.filtros.marca = this.els.filtroMarca?.value || null;
+  this.state.filtros.rubro = this.els.filtroRubro?.value || null;
+  this.state.filtros.talleDesde = this.els.filtroTalleDesde?.value || null;
+  this.state.filtros.talleHasta = this.els.filtroTalleHasta?.value || null;
+
+  this.state.filtros.unidadesDesde =
+    this.els.filtroUnidadesDesde?.value || null;
+  this.state.filtros.unidadesHasta =
+    this.els.filtroUnidadesHasta?.value || null;
+};
+
+AppCore.filtrarPorUnidadesLocal = function (items) {
+  const desdeRaw = this.state.filtros.unidadesDesde;
+  const hastaRaw = this.state.filtros.unidadesHasta;
+
+  if (!desdeRaw && !hastaRaw) return items;
+
+  const desde = desdeRaw ? parseInt(desdeRaw, 10) : null;
+  const hasta = hastaRaw ? parseInt(hastaRaw, 10) : null;
+
+  if (!desde && !hasta) return items;
+
+  return (items || []).filter((it) => {
+    const total = (it.talles || []).reduce(
+      (acc, t) => acc + Number(t.stock || 0),
+      0
+    );
+
+    if (desde !== null && total < desde) return false;
+    if (hasta !== null && total > hasta) return false;
+    return true;
+  });
+};
+
+AppCore.buscarPorFiltros = async function () {
+  this.actualizarFiltrosDesdeUI();
+
+  const body = {
+    question: "",
+    filtros_globales: true,
+    marca: this.state.filtros.marca || null,
+    rubro: this.state.filtros.rubro || null,
+    talleDesde: this.state.filtros.talleDesde
+      ? parseInt(this.state.filtros.talleDesde)
+      : null,
+    talleHasta: this.state.filtros.talleHasta
+      ? parseInt(this.state.filtros.talleHasta)
+      : null,
+    soloUltimo: false,
+    soloNegativo: false,
+    solo_stock: this.els.chkSoloStock?.checked || false,
+
+    unidadesDesde: this.state.filtros.unidadesDesde
+      ? parseInt(this.state.filtros.unidadesDesde)
+      : null,
+    unidadesHasta: this.state.filtros.unidadesHasta
+      ? parseInt(this.state.filtros.unidadesHasta)
+      : null,
+  };
+
+  if (this.state.currentAbort) this.state.currentAbort.abort();
+  this.state.currentAbort = new AbortController();
+
+  this.setSearchStatus("Buscando…", "blue");
+  ORB.setLoading?.(true);
+
+  if (this.els.resultsStatus)
+    this.els.resultsStatus.textContent = "Buscando…";
+
+  try {
+    const res = await fetch(this.config.backendUrl + "/query", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: this.state.currentAbort.signal,
+    });
+
+    if (!res.ok) throw new Error();
+
+    let items = (await res.json()).items || [];
+
+    items = this.filtrarPorUnidadesLocal(items);
+
+    this.state.items = items;
+
+    this.renderResultados(items);
+    window.actualizarDashboard?.(items);
+    this.actualizarIndicadores(items);
+
+    this.setConnectionStatus(true);
+    this.setOrbIdle();
+    this.setSearchStatus("Conectado", "green");
+
+    if (this.els.resultsStatus)
+      this.els.resultsStatus.textContent = `${items.length} resultados`;
+  } catch (err) {
+    if (err.name === "AbortError") return;
+
+    this.setConnectionStatus(false);
+    ORB.setError?.(true);
+    this.setSearchStatus("Error de conexión", "red");
+
+    if (this.els.resultsStatus)
+      this.els.resultsStatus.textContent = "Error de conexión";
+  } finally {
+    ORB.setLoading?.(false);
+  }
+};
 
 // ============================================================
-// EVENTOS DE UI (mínimos desde AppCore)
+// EVENTOS DE UI
 // ============================================================
 AppCore.conectarEventosUI = function () {
   this.els.btnAplicarFiltros?.addEventListener("click", () => {
@@ -1083,7 +1023,7 @@ AppCore.init = function () {
 };
 
 // ============================================================
-// BADGE DE VERSIÓN (para footer)
+// BADGE DE VERSIÓN
 // ============================================================
 function inicializarBadgeVersion() {
   const badge = document.getElementById("version-badge");
@@ -1096,20 +1036,8 @@ function inicializarBadgeVersion() {
 }
 
 // ============================================================
-// INSTANCIA GLOBAL
+// SISTEMA DE ACTUALIZACIÓN (compatible con SW V5)
 // ============================================================
-window.appCore = AppCore;
-
-window.addEventListener("DOMContentLoaded", () => {
-  appCore.init();
-  inicializarBadgeVersion();
-  inicializarSistemaActualizacion();
-});
-
-/* ============================================================
-   SISTEMA DE ACTUALIZACIÓN — Opción 2 (Optimizado)
-   ============================================================ */
-
 function inicializarSistemaActualizacion() {
   if (!("serviceWorker" in navigator)) return;
 
@@ -1177,4 +1105,15 @@ window.addEventListener("error", (e) => {
 
 window.addEventListener("unhandledrejection", (e) => {
   console.error("PROMISE ERROR:", e.reason);
+});
+
+// ============================================================
+// INSTANCIA GLOBAL
+// ============================================================
+window.appCore = AppCore;
+
+window.addEventListener("DOMContentLoaded", () => {
+  appCore.init();
+  inicializarBadgeVersion();
+  inicializarSistemaActualizacion();
 });
