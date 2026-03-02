@@ -1,6 +1,6 @@
 // ============================================================
 // DASHBOARD ENGINE — Gráficos por talle / marca / rubro
-// Versión optimizada + selector de tipo de gráfico (Opción C)
+// Versión corregida + compatible con HTML/CSS finales
 // ============================================================
 
 let stockChart = null;
@@ -60,7 +60,7 @@ function prepararDatos(items, modo) {
 // ------------------------------------------------------------
 function actualizarDashboard(items) {
   const modoSelect = document.getElementById("chart-mode");
-  const canvas = document.getElementById("stockChart");
+  const canvas = document.getElementById("chart-canvas"); // ← CORREGIDO
 
   if (!canvas || !modoSelect) return;
 
@@ -184,11 +184,11 @@ chartTypeButtons.forEach((btn) => {
 });
 
 // ------------------------------------------------------------
-// REACTIVIDAD CON MODO DÍA / NOCHE
+// REACTIVIDAD CON MODO DÍA (toggle-light)
 // ------------------------------------------------------------
-const toggleDark = document.getElementById("toggle-dark");
-if (toggleDark) {
-  toggleDark.addEventListener("change", () => {
+const toggleLight = document.getElementById("toggle-light"); // ← CORREGIDO
+if (toggleLight) {
+  toggleLight.addEventListener("change", () => {
     if (window.appCore?.state?.items) {
       actualizarDashboard(window.appCore.state.items);
     }
