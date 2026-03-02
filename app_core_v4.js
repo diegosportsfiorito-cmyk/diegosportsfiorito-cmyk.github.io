@@ -505,7 +505,8 @@ AppCore.interpretarQuery = function (raw) {
     talleHasta: null,
     soloUltimo: false,
     soloNegativo: false,
-    question: usarFiltros ? "" : q,
+    // Siempre mandamos el texto limpio como 
+    question question: q,
   };
 };
 
@@ -526,7 +527,7 @@ AppCore.buscar = async function () {
   const parsed = this.interpretarQuery(q);
 
   const body = {
-    question: parsed.question || "",
+    question: parsed.question || q,
     filtros_globales: !!parsed.filtros_globales,
     marca: parsed.marca || null,
     rubro: parsed.rubro || null,
