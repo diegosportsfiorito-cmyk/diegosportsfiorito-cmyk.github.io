@@ -11,7 +11,7 @@ const RUNTIME_CACHE = `ia-pro-ultra-runtime-${CACHE_VERSION}`;
 const STATIC_ASSETS = [
   "/",
   "/index.html",
-  "/app.js",
+  "./app_core_v5.js",
   "/styles_v2.css",
   "/img/bg-quantum-blur.png",
   "/img/bg-quantum-foreground.png",
