@@ -172,6 +172,7 @@ const AppCore = {
     };
   },
 };
+
 // ============================================================
 // PARSER INTELIGENTE (corregido, estable)
 // ============================================================
@@ -285,14 +286,13 @@ AppCore.interpretarQuery = function (raw) {
   const esMarcaExacta = marcasNorm.includes(qNorm);
   const esRubroExacto = rubrosNorm.includes(qNorm);
 
-  // 🔑 Solo usamos filtros automáticos para RUBRO exacto.
-  // Para MARCA exacta (ADIDAS, etc.) dejamos que viaje como texto libre.
-  let usarFiltros = esRubroExacto;
+  let usarFiltros = esMarcaExacta || esRubroExacto;
 
   if (!usarFiltros && tokens.length === 1 && marcasNorm.length) {
     const marcaCorregida = this.corregirMarcaPorVoz?.(qNorm, mapMarcas);
     if (marcaCorregida) {
-      marca = marcaCorregida; // no activamos filtros_globales
+      marca = marcaCorregida;
+      usarFiltros = true;
     }
   }
 
@@ -304,10 +304,9 @@ AppCore.interpretarQuery = function (raw) {
     talleHasta: null,
     soloUltimo: false,
     soloNegativo: false,
-    question: q,
+    question: q, // SIEMPRE enviamos texto
   };
 };
-
 // ============================================================
 // BÚSQUEDA PRINCIPAL (corregida, estable)
 // ============================================================
@@ -448,7 +447,7 @@ AppCore.cargarCatalogo = async function () {
     if (this.els.fuenteStockTotal) this.els.fuenteStockTotal.textContent = r.stock_total ?? "—";
     if (this.els.fuenteStockNegativo) this.els.fuenteStockNegativo.textContent = r.stock_negativo ?? "—";
 
-    this.poblarFiltros();
+    this.poblarFiltros?.();
 
     this.setConnectionStatus(true);
     this.setSearchStatus("Conectado", "green");
@@ -821,7 +820,6 @@ AppCore.copiarResultados = function () {
   navigator.clipboard.writeText(txt);
   this.showToast("Copiado");
 };
-
 // ============================================================
 // STOP TODO
 // ============================================================
@@ -879,6 +877,7 @@ AppCore.limpiarPantalla = function () {
   this.setOrbIdle();
   this.setSearchStatus("Listo", "blue");
 };
+
 // ============================================================
 // BÚSQUEDA POR FILTROS (incluye unidades + FIX AbortError)
 // ============================================================
