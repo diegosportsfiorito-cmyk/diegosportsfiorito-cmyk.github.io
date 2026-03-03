@@ -1,16 +1,14 @@
 // ============================================================
-// UI ENGINE V4 — Control total de UI + Layout móvil
-// ============================================================
-// Opción 1A + B + D: Dictado automático + ORB + Scanner + Vistas
+// UI ENGINE V5 — Compatible con AppCore V5
+// Control de vistas, filtros, ayuda, ORB, scanner y layout
 // ============================================================
 
 function initUI(app) {
   const els = app.els;
 
   // ============================================================
-  // FALLBACK PARA SCANNER MODO (simple/completo)
+  // SCANNER MODE (simple/completo)
   // ============================================================
-
   window.scannerModoFallback = "simple";
 
   function getScannerModo() {
@@ -32,7 +30,6 @@ function initUI(app) {
   // ============================================================
   // ELEMENTOS BASE
   // ============================================================
-
   const orbCore = document.getElementById("orb-core");
   const micButton = document.getElementById("mic-button");
   const dictadoAutoSwitch = document.getElementById("modo-voz-switch");
@@ -61,14 +58,16 @@ function initUI(app) {
   const adminGuardar = document.getElementById("admin-guardar");
   const adminCerrar = document.getElementById("admin-cerrar");
 
-  // ⚠ En tu HTML el switch es toggle-light
+  // ⚠ Tu HTML usa toggle-light, no toggle-dark
   const toggleDark = document.getElementById("toggle-light");
 
   // PANEL FUENTE DE DATOS
   const fuenteToggle = document.getElementById("fuente-datos-toggle");
   const fuentePanel = document.getElementById("fuente-datos-panel");
 
-  // Aseguramos estados iniciales ocultos
+  // ============================================================
+  // ESTADOS INICIALES (evita scroll infinito)
+  // ============================================================
   if (els.filtrosPanel) {
     els.filtrosPanel.classList.add("hidden");
     els.filtrosPanel.classList.remove("visible");
@@ -77,25 +76,15 @@ function initUI(app) {
     fuentePanel.classList.add("hidden");
     fuentePanel.classList.remove("visible");
   }
-  if (helpModal) {
-    helpModal.classList.add("hidden");
-  }
+  if (helpModal) helpModal.classList.add("hidden");
   if (scannerOverlay) {
     scannerOverlay.classList.add("hidden");
     scannerOverlay.style.display = "none";
   }
 
   // ============================================================
-  // BOTONES DEL SCANNER (solo 2, como en el HTML)
+  // SCANNER SWITCH
   // ============================================================
-
-  const btnScannerInterno1 = document.getElementById("btn-scanner-interno-1");
-  const btnScannerExternoPreferido = document.getElementById("btn-scanner-externo-preferido");
-
-  // ============================================================
-  // SWITCH DEL SCANNER (Simple / Completo)
-  // ============================================================
-
   const scannerSwitch = document.getElementById("scanner-mode-switch");
 
   if (scannerSwitch) {
@@ -112,7 +101,6 @@ function initUI(app) {
   // ============================================================
   // BEEP
   // ============================================================
-
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
 
@@ -129,13 +117,12 @@ function initUI(app) {
       gain.connect(audioCtx.destination);
       osc.start();
       setTimeout(() => osc.stop(), duration);
-    } catch (e) {}
+    } catch {}
   }
 
   // ============================================================
   // ESTADO DE VOZ
   // ============================================================
-
   function setVoiceUIState(state) {
     if (!voiceStatus) return;
 
@@ -157,7 +144,6 @@ function initUI(app) {
   // ============================================================
   // DICTADO AUTOMÁTICO
   // ============================================================
-
   if (dictadoAutoSwitch) {
     const savedAuto = localStorage.getItem("dictadoAutomatico");
     dictadoAutoSwitch.checked = savedAuto === "on";
@@ -175,11 +161,10 @@ function initUI(app) {
   // ============================================================
   // DICTADO MANUAL
   // ============================================================
-
   function startDictado() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
     if (!SR) {
-      app.showToast("Dictado no soportado en este navegador");
+      app.showToast("Dictado no soportado");
       beep(600);
       return;
     }
@@ -222,7 +207,6 @@ function initUI(app) {
   // ============================================================
   // AUTOCOMPLETE
   // ============================================================
-
   function renderAutocomplete(term) {
     if (!autoList || !els.searchInput) return;
     const value = term.trim();
@@ -295,7 +279,6 @@ function initUI(app) {
   // ============================================================
   // ORB
   // ============================================================
-
   if (orbCore) {
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
@@ -323,9 +306,8 @@ function initUI(app) {
   }
 
   // ============================================================
-  // SCANNER — NATIVO + WEB FALLBACK
+  // SCANNER — overlay liviano
   // ============================================================
-
   const isAndroidApp = !!(window.Android && typeof Android.abrirScanner === "function");
 
   function setScannerOverlay(active) {
@@ -336,7 +318,7 @@ function initUI(app) {
       scannerOverlay.classList.remove("hidden");
       scannerOverlay.style.display = "block";
       document.body.classList.add("scanner-active");
-      if (laser) laser.style.display = "none"; // overlay más liviano
+      if (laser) laser.style.display = "none"; // overlay liviano
     } else {
       scannerOverlay.classList.add("hidden");
       scannerOverlay.style.display = "none";
@@ -380,13 +362,14 @@ function initUI(app) {
     }
   }
 
-  // Botón scanner interno
+  const btnScannerInterno1 = document.getElementById("btn-scanner-interno-1");
+  const btnScannerExternoPreferido = document.getElementById("btn-scanner-externo-preferido");
+
   btnScannerInterno1?.addEventListener("click", () => {
     if (isAndroidApp) abrirScannerNativo();
     else abrirScannerWebInterno();
   });
 
-  // Botón scanner externo
   btnScannerExternoPreferido?.addEventListener("click", () => {
     if (isAndroidApp) abrirScannerNativo();
     else abrirScannerWebExternoPreferido();
@@ -395,7 +378,6 @@ function initUI(app) {
   // ============================================================
   // BOTONES DE ACCIÓN
   // ============================================================
-
   btnClear?.addEventListener("click", () => {
     app.limpiarPantalla();
     app.setOrbIdle?.();
@@ -412,11 +394,9 @@ function initUI(app) {
     app.setOrbIdle?.();
     beep(500);
   });
-
   // ============================================================
   // FILTROS
   // ============================================================
-
   btnFiltros?.addEventListener("click", () => {
     if (!els.filtrosPanel) return;
     const visible = els.filtrosPanel.classList.contains("visible");
@@ -431,9 +411,8 @@ function initUI(app) {
   });
 
   // ============================================================
-  // VISTAS
+  // VISTAS (solo una visible)
   // ============================================================
-
   function setVista(v) {
     app.state.vistaActual = v;
 
@@ -442,15 +421,12 @@ function initUI(app) {
     btnVistaArticulo?.classList.toggle("active", v === "articulo");
 
     if (vistaTabla) {
-      vistaTabla.classList.toggle("active", v === "tabla");
       vistaTabla.style.display = v === "tabla" ? "block" : "none";
     }
     if (vistaTarjeta) {
-      vistaTarjeta.classList.toggle("active", v === "tarjeta");
       vistaTarjeta.style.display = v === "tarjeta" ? "block" : "none";
     }
     if (vistaArticulo) {
-      vistaArticulo.classList.toggle("active", v === "articulo");
       vistaArticulo.style.display = v === "articulo" ? "block" : "none";
     }
 
@@ -467,7 +443,6 @@ function initUI(app) {
   // ============================================================
   // PANEL ADMIN
   // ============================================================
-
   adminGuardar?.addEventListener("click", () => {
     const modo = document.getElementById("admin-modo-defecto").value;
     const backend = document.getElementById("admin-backend-url").value;
@@ -487,9 +462,8 @@ function initUI(app) {
   });
 
   // ============================================================
-  // MÉTRICAS FILTRABLES (incluye Última unidad)
+  // MÉTRICAS FILTRABLES
   // ============================================================
-
   const mArt = document.getElementById("metric-articulos");
   const mUni = document.getElementById("metric-pares");
   const mNeg = document.getElementById("metric-alertas-negativos");
@@ -557,11 +531,9 @@ function initUI(app) {
   mCero?.addEventListener("click", filtrarSinStock);
   mVal?.addEventListener("click", ordenarPorValorizado);
   mUlt?.addEventListener("click", filtrarUltimaUnidad);
-
   // ============================================================
   // MODO DÍA / NOCHE
   // ============================================================
-
   function aplicarModoDark(on) {
     document.body.classList.toggle("light-mode", on);
     localStorage.setItem("theme", on ? "light" : "dark");
@@ -578,7 +550,6 @@ function initUI(app) {
   // ============================================================
   // AYUDA
   // ============================================================
-
   helpModal?.classList.add("hidden");
 
   helpButton?.addEventListener("click", () => {
@@ -596,7 +567,6 @@ function initUI(app) {
   // ============================================================
   // FUENTE DE DATOS — TOGGLE
   // ============================================================
-
   fuenteToggle?.addEventListener("click", () => {
     if (!fuentePanel) return;
     const visible = fuentePanel.classList.contains("visible");
@@ -607,7 +577,6 @@ function initUI(app) {
   // ============================================================
   // ATAJOS DE TECLADO
   // ============================================================
-
   document.addEventListener("keydown", (e) => {
     const tag = (e.target && e.target.tagName) || "";
     const isInput = ["INPUT", "TEXTAREA"].includes(tag);
@@ -624,6 +593,7 @@ function initUI(app) {
 
     // F2 = Scanner interno
     if (e.key === "F2" && !isInput) {
+      const btnScannerInterno1 = document.getElementById("btn-scanner-interno-1");
       btnScannerInterno1?.click();
       e.preventDefault();
       return;
