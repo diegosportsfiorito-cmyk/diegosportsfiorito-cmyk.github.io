@@ -1044,7 +1044,7 @@ function inicializarSistemaActualizacion() {
   let newWorker = null;
 
   navigator.serviceWorker
-    .register("service-worker.js")
+    .register("sw_v5.js")
     .then((reg) => {
       reg.addEventListener("updatefound", () => {
         newWorker = reg.installing;
