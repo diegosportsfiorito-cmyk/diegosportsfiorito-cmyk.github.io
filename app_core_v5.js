@@ -285,13 +285,14 @@ AppCore.interpretarQuery = function (raw) {
   const esMarcaExacta = marcasNorm.includes(qNorm);
   const esRubroExacto = rubrosNorm.includes(qNorm);
 
-  let usarFiltros = esMarcaExacta || esRubroExacto;
+  // 🔑 Solo usamos filtros automáticos para RUBRO exacto.
+  // Para MARCA exacta (ADIDAS, etc.) dejamos que viaje como texto libre.
+  let usarFiltros = esRubroExacto;
 
   if (!usarFiltros && tokens.length === 1 && marcasNorm.length) {
     const marcaCorregida = this.corregirMarcaPorVoz?.(qNorm, mapMarcas);
     if (marcaCorregida) {
-      marca = marcaCorregida;
-      usarFiltros = true;
+      marca = marcaCorregida; // no activamos filtros_globales
     }
   }
 
@@ -303,7 +304,7 @@ AppCore.interpretarQuery = function (raw) {
     talleHasta: null,
     soloUltimo: false,
     soloNegativo: false,
-    question: q, // SIEMPRE enviamos texto
+    question: q,
   };
 };
 
