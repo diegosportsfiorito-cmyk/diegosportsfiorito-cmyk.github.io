@@ -61,11 +61,29 @@ function initUI(app) {
   const adminGuardar = document.getElementById("admin-guardar");
   const adminCerrar = document.getElementById("admin-cerrar");
 
-  const toggleDark = document.getElementById("toggle-dark");
+  // ⚠ En tu HTML el switch es toggle-light
+  const toggleDark = document.getElementById("toggle-light");
 
   // PANEL FUENTE DE DATOS
   const fuenteToggle = document.getElementById("fuente-datos-toggle");
   const fuentePanel = document.getElementById("fuente-datos-panel");
+
+  // Aseguramos estados iniciales ocultos
+  if (els.filtrosPanel) {
+    els.filtrosPanel.classList.add("hidden");
+    els.filtrosPanel.classList.remove("visible");
+  }
+  if (fuentePanel) {
+    fuentePanel.classList.add("hidden");
+    fuentePanel.classList.remove("visible");
+  }
+  if (helpModal) {
+    helpModal.classList.add("hidden");
+  }
+  if (scannerOverlay) {
+    scannerOverlay.classList.add("hidden");
+    scannerOverlay.style.display = "none";
+  }
 
   // ============================================================
   // BOTONES DEL SCANNER (solo 2, como en el HTML)
@@ -76,7 +94,7 @@ function initUI(app) {
 
   // ============================================================
   // SWITCH DEL SCANNER (Simple / Completo)
-// ============================================================
+  // ============================================================
 
   const scannerSwitch = document.getElementById("scanner-mode-switch");
 
@@ -273,6 +291,7 @@ function initUI(app) {
       autoList.innerHTML = "";
     }
   });
+
   // ============================================================
   // ORB
   // ============================================================
@@ -311,11 +330,16 @@ function initUI(app) {
 
   function setScannerOverlay(active) {
     if (!scannerOverlay) return;
+    const laser = document.getElementById("scan-laser");
+
     if (active) {
       scannerOverlay.classList.remove("hidden");
+      scannerOverlay.style.display = "block";
       document.body.classList.add("scanner-active");
+      if (laser) laser.style.display = "none"; // overlay más liviano
     } else {
       scannerOverlay.classList.add("hidden");
+      scannerOverlay.style.display = "none";
       document.body.classList.remove("scanner-active");
     }
   }
@@ -394,7 +418,10 @@ function initUI(app) {
   // ============================================================
 
   btnFiltros?.addEventListener("click", () => {
-    els.filtrosPanel?.classList.toggle("visible");
+    if (!els.filtrosPanel) return;
+    const visible = els.filtrosPanel.classList.contains("visible");
+    els.filtrosPanel.classList.toggle("visible", !visible);
+    els.filtrosPanel.classList.toggle("hidden", visible);
   });
 
   els.btnAplicarFiltros?.addEventListener("click", () => {
@@ -414,9 +441,18 @@ function initUI(app) {
     btnVistaTarjetas?.classList.toggle("active", v === "tarjeta");
     btnVistaArticulo?.classList.toggle("active", v === "articulo");
 
-    vistaTabla?.classList.toggle("active", v === "tabla");
-    vistaTarjeta?.classList.toggle("active", v === "tarjeta");
-    vistaArticulo?.classList.toggle("active", v === "articulo");
+    if (vistaTabla) {
+      vistaTabla.classList.toggle("active", v === "tabla");
+      vistaTabla.style.display = v === "tabla" ? "block" : "none";
+    }
+    if (vistaTarjeta) {
+      vistaTarjeta.classList.toggle("active", v === "tarjeta");
+      vistaTarjeta.style.display = v === "tarjeta" ? "block" : "none";
+    }
+    if (vistaArticulo) {
+      vistaArticulo.classList.toggle("active", v === "articulo");
+      vistaArticulo.style.display = v === "articulo" ? "block" : "none";
+    }
 
     if (autoList) autoList.innerHTML = "";
     app.renderResultados(app.state.items);
@@ -563,8 +599,9 @@ function initUI(app) {
 
   fuenteToggle?.addEventListener("click", () => {
     if (!fuentePanel) return;
-    fuentePanel.classList.toggle("visible");
-    fuentePanel.classList.toggle("hidden");
+    const visible = fuentePanel.classList.contains("visible");
+    fuentePanel.classList.toggle("visible", !visible);
+    fuentePanel.classList.toggle("hidden", visible);
   });
 
   // ============================================================
