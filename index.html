@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="build-version" content="2026-03-02_UI-V5" />
+  <title>STOCK IA PRO — Asistente inteligente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ICONO -->
+  <link rel="icon" type="image/svg+xml" 
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%23007bff'/%3E%3Ctext x='50%25' y='58%25' font-size='140' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3EIA%3C/text%3E%3C/svg%3E">
+
+  <!-- MANIFEST PWA -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- ESTILOS -->
+  <link rel="stylesheet" href="styles_v2.css?v=20260302">
+  <link rel="stylesheet" href="scanner.css?v=20260302" />
+
+  <script>
+    console.log("%cBUILD VERSION: 2026-03-02_UI-V5", "color:#4f8cff;font-size:14px;font-weight:bold");
+  </script>
+
+  <!-- 🔐 PROTECCIÓN: si no hay token → login -->
+  <script>
+    if (!localStorage.getItem("token")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+
+<body>
+  <div id="build-version" style="display:none">2026-03-02_UI-V5</div>
+
+  <div class="app-shell">
+    <div class="app-container">
+
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="branding">
+          <div class="brand-orb-mini">IA</div>
+          <div>
+            <div class="brand-title">STOCK IA PRO</div>
+            <div class="brand-subtitle">Asistente inteligente de stock</div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="connection-indicator">
+            <span class="connection-dot" id="connection-dot"></span>
+            <span>Estado conexión</span>
+          </div>
+
+          <div class="header-switch-row">
+            <label class="orb-mode-switch">
+              <span>Modo día</span>
+              <label class="switch small">
+                <input id="toggle-light" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </label>
+          </div>
+
+          <button id="help-button" class="btn-help">❓</button>
+        </div>
+      </header>
+
+      <!-- SEARCH + ORB -->
+      <section class="search-card">
+        <div id="search-status" class="search-status">Listo</div>
+
+        <div class="search-row">
+          <div class="search-input-wrapper">
+            <input id="search-input" type="text" class="search-input"
+              placeholder="Buscar artículo, marca, rubro, talle, color, precio..." autocomplete="off" />
+            <ul id="autocomplete-list" class="autocomplete-list"></ul>
+          </div>
+        </div>
+
+        <!-- SCANNER BUTTONS -->
+        <div class="scanner-buttons">
+          <button id="btn-scanner-interno-1" class="scanner-button">📷</button>
+          <button id="btn-scanner-externo-preferido" class="scanner-button">📲</button>
+        </div>
+
+        <!-- SCANNER MODE -->
+        <div class="scanner-mode-switch">
+          <label class="orb-mode-switch">
+            <span>Simple</span>
+            <label class="switch small">
+              <input id="scanner-mode-switch" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+            <span>Completo</span>
+          </label>
+        </div>
+
+        <div class="search-actions-row">
+          <button id="btn-limpiar" class="orb-action-btn">🧹</button>
+          <button id="btn-copiar" class="orb-action-btn">📋</button>
+          <button id="btn-stop" class="orb-action-btn stop">⏹</button>
+        </div>
+
+        <div class="voice-row">
+          <button id="mic-button" class="mic-btn">🎤</button>
+
+          <label class="orb-mode-switch">
+            <span>Dictado</span>
+            <label class="switch small">
+              <input id="modo-voz-switch" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <label class="orb-mode-switch">
+            <span>Manos libres</span>
+            <label class="switch small">
+              <input id="modo-manos-libres" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </label>
+        </div>
+
+        <div id="voice-status" class="voice-status">Dictado desactivado</div>
+
+        <!-- FILTROS -->
+        <div class="search-filters-row">
+          <label class="solo-stock">
+            <span>Solo con stock</span>
+            <label class="switch">
+              <input id="chk-solo-stock" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </label>
+
+          <button id="btn-filtros" class="btn-secondary">Filtros</button>
+        </div>
+
+        <!-- ORB -->
+        <div class="orb-zone">
+          <div class="orb-actions-ring">
+            <div id="orb-core" class="orb-ultra"></div>
+          </div>
+        </div>
+
+        <!-- MÉTRICAS -->
+        <div class="metrics-row">
+          <div id="metric-articulos" class="metric-card">
+            <div class="metric-label">Artículos</div>
+            <div class="metric-value" id="metric-articulos-value">0</div>
+          </div>
+
+          <div id="metric-pares" class="metric-card">
+            <div class="metric-label">Unidades</div>
+            <div class="metric-value" id="metric-pares-value">0</div>
+          </div>
+
+          <div id="metric-alertas-negativos" class="metric-card">
+            <div class="metric-label">Stock negativo</div>
+            <div class="metric-value" id="metric-alertas-negativos-value">0</div>
+          </div>
+
+          <div id="metric-alertas-cero" class="metric-card">
+            <div class="metric-label">Sin stock</div>
+            <div class="metric-value" id="metric-alertas-cero-value">0</div>
+          </div>
+
+          <div id="metric-ultima-unidad" class="metric-card">
+            <div class="metric-label">Última unidad</div>
+            <div class="metric-value" id="metric-ultima-unidad-value">0</div>
+          </div>
+
+          <div id="metric-valorizado" class="metric-card">
+            <div class="metric-label">Valorizado</div>
+            <div class="metric-value" id="metric-valorizado-value">$0</div>
+          </div>
+        </div>
+
+        <!-- PANEL DE FILTROS -->
+        <div id="filtros-panel">
+          <div class="filtro-row">
+            <select id="filtro-marca" class="filtro-input">
+              <option value="">Marca</option>
+            </select>
+
+            <select id="filtro-rubro" class="filtro-input">
+              <option value="">Rubro</option>
+            </select>
+          </div>
+
+          <div class="filtro-row">
+            <input id="filtro-talle-desde" type="number" class="filtro-input" placeholder="Talle desde" />
+            <input id="filtro-talle-hasta" type="number" class="filtro-input" placeholder="Talle hasta" />
+          </div>
+
+          <div class="filtro-row">
+            <input id="filtro-unidades-desde" type="number" class="filtro-input" placeholder="Unidades desde" />
+            <input id="filtro-unidades-hasta" type="number" class="filtro-input" placeholder="Unidades hasta" />
+          </div>
+
+          <div class="filtro-row">
+            <button id="btn-aplicar-filtros" class="btn-secondary">Aplicar filtros</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MAIN ROW -->
+      <section class="main-row">
+        <div class="results-card">
+          <div class="results-header">
+            <div class="results-title">Resultados</div>
+
+            <div class="results-right">
+              <div class="results-view-toggle">
+                <button id="btn-ver-tabla" class="view-btn">Tabla</button>
+                <button id="btn-ver-tarjetas" class="view-btn active">Tarjetas</button>
+                <button id="btn-ver-articulo" class="view-btn">Artículo</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="results-status" class="results-status">Esperando consulta</div>
+
+          <div id="results-container">
+            <div id="vista-tabla" class="vista-tabla"></div>
+            <div id="vista-tarjeta" class="vista-tarjeta"></div>
+            <div id="vista-articulo" class="vista-articulo"></div>
+          </div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <aside class="dashboard-card">
+          <div class="dashboard-header">
+            <div class="dashboard-title">Visión rápida</div>
+            <div class="dashboard-subtitle">Distribución por talle / marca / rubro</div>
+          </div>
+
+          <select id="chart-mode">
+            <option value="talle">Por talle</option>
+            <option value="marca">Por marca</option>
+            <option value="rubro">Por rubro</option>
+          </select>
+
+          <div class="chart-type-row">
+            <button class="chart-type-btn active" data-chart-type="pie">Torta</button>
+            <button class="chart-type-btn" data-chart-type="bar">Barra</button>
+            <button class="chart-type-btn" data-chart-type="line">Líneas</button>
+            <button class="chart-type-btn" data-chart-type="doughnut">Doughnut</button>
+            <button class="chart-type-btn" data-chart-type="polarArea">Polar</button>
+          </div>
+
+          <canvas id="chart-canvas"></canvas>
+        </aside>
+      </section>
+
+      <!-- SCANNER OVERLAY -->
+      <div id="scanner-overlay" class="hidden">
+        <video id="scanner-video" autoplay playsinline></video>
+        <div id="focus-ring"></div>
+        <div id="scan-frame"></div>
+        <div id="scan-laser"></div>
+      </div>
+
+      <!-- FUENTE DE DATOS -->
+      <section class="fuente-datos-wrapper">
+        <button id="fuente-datos-toggle" class="btn-secondary">Fuente de datos</button>
+
+        <div id="fuente-datos-panel">
+          <div><strong>Archivo:</strong> <span id="fuente-archivo">—</span></div>
+          <div><strong>Fecha:</strong> <span id="fuente-fecha">—</span></div>
+          <div><strong>Marcas:</strong> <span id="fuente-marcas">—</span></div>
+          <div><strong>Rubros:</strong> <span id="fuente-rubros">—</span></div>
+          <div><strong>Artículos:</strong> <span id="fuente-articulos">—</span></div>
+          <div><strong>Stock total:</strong> <span id="fuente-stock-total">—</span></div>
+          <div><strong>Stock negativo:</strong> <span id="fuente-stock-negativo">—</span></div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="app-footer">
+        <div class="footer-left">
+          <div class="footer-logo">SCL</div>
+          <div class="footer-text">Salas Creative Lab</div>
+        </div>
+
+        <div class="footer-right">
+          <span id="version-badge" class="version-badge">2026-03-02_UI-V5</span>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- PANEL ADMIN -->
+  <div id="admin-panel">
+    <h2 class="admin-title">Panel administrador</h2>
+
+    <div class="admin-list">
+
+      <div class="admin-item">
+        <div class="admin-item-label">URL backend</div>
+        <input id="admin-backend-url" type="text" class="admin-input" />
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Modo por defecto</div>
+        <select id="admin-modo-defecto" class="admin-input">
+          <option value="simple">Simple</option>
+          <option value="completo">Completo</option>
+        </select>
+      </div>
+
+      <div class="admin-section-title">ORB — Apariencia</div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Color día</div>
+        <input id="orb-color" type="color" class="admin-input" />
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Color noche</div>
+        <input id="orb-color-dark" type="color" class="admin-input" />
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Tamaño ORB (px)</div>
+        <input id="orb-size" type="range" min="80" max="200" class="admin-input" />
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Intensidad halo</div>
+        <input id="orb-halo" type="range" min="0" max="120" class="admin-input" />
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Modo visual</div>
+        <select id="orb-mode" class="admin-input">
+          <option value="ultra">Ultra</option>
+          <option value="3d">3D</option>
+          <option value="classic">Classic</option>
+        </select>
+      </div>
+
+      <div class="admin-item">
+        <div class="admin-item-label">Presets</div>
+        <select id="orb-presets" class="admin-input">
+          <option value="default">Default</option>
+          <option value="plasma">Plasma</option>
+          <option value="fuego">Fuego</option>
+          <option value="neon">Neón</option>
+          <option value="minimal">Minimal</option>
+        </select>
+      </div>
+
+      <button id="orb-reset" class="btn-secondary">Reset ORB</button>
+
+      <div class="admin-actions">
+        <button id="admin-guardar" class="btn-secondary">Guardar</button>
+        <button id="admin-cerrar" class="btn-secondary">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE AYUDA -->
+  <div id="help-modal">
+    <div class="help-title">Ayuda rápida</div>
+    <div class="help-text">
+      <ul>
+        <li>Escribí o escaneá un código, marca, rubro o talle.</li>
+        <li>Usá el botón 🎤 si el modo dictado está activo.</li>
+        <li>Activá manos libres para consultas continuas.</li>
+        <li>Usá “Solo con stock” y “Filtros” para acotar resultados.</li>
+        <li>Click en métricas para entender el stock global.</li>
+        <li>Atajos: ESC limpia, F2 scanner, F3 voz.</li>
+      </ul>
+    </div>
+    <button id="help-close" class="help-close">Cerrar</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="scanner_v7_barcodeDetector.js?v=20260302"></script>
+  <script src="app_core_v5.js?v=20260302"></script>
+  <script src="ui_engine_v5.js?v=20260302"></script>
+  <script src="orb_engine_v2.js?v=20260302"></script>
+  <script src="orb_admin_engine.js?v=20260302"></script>
+  <script src="dashboard_engine.js?v=20260302"></script>
+  <script src="indicators_engine.js?v=20260302"></script>
+
+  <!-- SERVICE WORKER -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw_v5.js")
+        .then(() => console.log("SW registrado OK"))
+        .catch(err => console.error("Error registrando SW:", err));
+    }
+  </script>
+
+  <!-- INICIALIZACIÓN -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      if (window.appCore && window.initUI) {
+        initUI(appCore);
+      }
+    });
+  </script>
+
+</body>
+</html>
