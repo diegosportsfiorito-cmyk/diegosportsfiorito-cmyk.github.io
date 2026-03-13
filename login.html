@@ -98,32 +98,34 @@
   <script src="ui_engine_v5.js"></script>
 
   <script>
-    const btn = document.getElementById("btn-login");
-    const err = document.getElementById("login-error");
+  const btn = document.getElementById("btn-login");
+  const err = document.getElementById("login-error");
 
-    btn.addEventListener("click", async () => {
-      const user = document.getElementById("user").value.trim();
-      const pass = document.getElementById("pass").value.trim();
+  btn.addEventListener("click", async () => {
+    const user = document.getElementById("user").value.trim();
+    const pass = document.getElementById("pass").value.trim();
 
-      err.style.display = "none";
+    err.style.display = "none";
 
-      if (!user || !pass) {
-        err.textContent = "Complete usuario y contraseña";
-        err.style.display = "block";
-        return;
-      }
+    if (!user || !pass) {
+      err.textContent = "Complete usuario y contraseña";
+      err.style.display = "block";
+      return;
+    }
 
-      const r = await appCore.login(user, pass);
+    // 🔥 ESTA ES LA FUNCIÓN CORRECTA
+    const r = await appCore.login(user, pass);
 
-      if (!r.ok) {
-        err.textContent = "Credenciales inválidas";
-        err.style.display = "block";
-        return;
-      }
+    if (!r.ok) {
+      err.textContent = "Credenciales inválidas";
+      err.style.display = "block";
+      return;
+    }
 
-      window.location.href = "index.html";
-    });
-  </script>
+    window.location.href = "index.html";
+  });
+</script>
+
 
 </body>
 </html>
