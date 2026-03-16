@@ -62,6 +62,9 @@
           </div>
 
           <button id="help-button" class="btn-help">❓</button>
+
+          <!-- 🔵 BOTÓN SALIR -->
+          <button id="logout-button" class="btn-logout">⎋</button>
         </div>
       </header>
 
@@ -157,7 +160,7 @@
 
           <div id="metric-alertas-negativos" class="metric-card">
             <div class="metric-label">Stock negativo</div>
-            <div class="metric-value" id="metric-alertas-negativos-value">0</div>
+            <div class="metric-value" id="metric-alertos-negativos-value">0</div>
           </div>
 
           <div id="metric-alertas-cero" class="metric-card">
@@ -177,7 +180,7 @@
         </div>
 
         <!-- PANEL DE FILTROS -->
-        <div id="filtros-panel">
+        <div id="filtros-panel" class="panel">
           <div class="filtro-row">
             <select id="filtro-marca" class="filtro-input">
               <option value="">Marca</option>
@@ -203,7 +206,6 @@
           </div>
         </div>
       </section>
-
       <!-- MAIN ROW -->
       <section class="main-row">
         <div class="results-card">
@@ -254,7 +256,7 @@
       </section>
 
       <!-- SCANNER OVERLAY -->
-      <div id="scanner-overlay" class="hidden">
+      <div id="scanner-overlay">
         <video id="scanner-video" autoplay playsinline></video>
         <div id="focus-ring"></div>
         <div id="scan-frame"></div>
@@ -265,7 +267,7 @@
       <section class="fuente-datos-wrapper">
         <button id="fuente-datos-toggle" class="btn-secondary">Fuente de datos</button>
 
-        <div id="fuente-datos-panel">
+        <div id="fuente-datos-panel" class="panel">
           <div><strong>Archivo:</strong> <span id="fuente-archivo">—</span></div>
           <div><strong>Fecha:</strong> <span id="fuente-fecha">—</span></div>
           <div><strong>Marcas:</strong> <span id="fuente-marcas">—</span></div>
@@ -290,9 +292,8 @@
 
     </div>
   </div>
-
   <!-- PANEL ADMIN -->
-  <div id="admin-panel">
+  <div id="admin-panel" class="panel">
     <h2 class="admin-title">Panel administrador</h2>
 
     <div class="admin-list">
@@ -362,7 +363,7 @@
   </div>
 
   <!-- MODAL DE AYUDA -->
-  <div id="help-modal">
+  <div id="help-modal" class="panel help-modal">
     <div class="help-title">Ayuda rápida</div>
     <div class="help-text">
       <ul>
@@ -377,6 +378,7 @@
     <button id="help-close" class="help-close">Cerrar</button>
   </div>
 
+  <!-- TOAST -->
   <div id="toast" class="toast"></div>
 
   <!-- SCRIPTS -->
