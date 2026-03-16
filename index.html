@@ -8,14 +8,13 @@
 
   <!-- ICONO -->
   <link rel="icon" type="image/svg+xml" 
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%23007bff'/%3E%3Ctext x='50%25' y='58%25' font-size='140' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3EIA%3C/text%3E%3C/svg%3E">
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256' viewBox='0 0 256 256'%3E%3Crect width='256' height='256' rx='48' fill='%23007bff'/%3E%3Ctext x='50%25' y='58%25' font-size='140' text-anchor='middle' fill='white' font-family='Arial, sans-serif'%3EIA%3C/text%3E%3C/svg%3E">
 
   <!-- MANIFEST PWA -->
   <link rel="manifest" href="manifest.json" />
 
   <!-- ESTILOS -->
   <link rel="stylesheet" href="styles_v2.css?v=20260302">
-  <link rel="stylesheet" href="scanner.css?v=20260302" />
 
   <script>
     console.log("%cBUILD VERSION: 2026-03-02_UI-V5", "color:#4f8cff;font-size:14px;font-weight:bold");
@@ -61,9 +60,7 @@
             </label>
           </div>
 
-          <button id="help-button" class="btn-help">❓</button>
-
-          <!-- 🔵 BOTÓN SALIR -->
+          <button id="btn-help" class="btn-help">❓</button>
           <button id="logout-button" class="btn-logout">⎋</button>
         </div>
       </header>
@@ -160,7 +157,7 @@
 
           <div id="metric-alertas-negativos" class="metric-card">
             <div class="metric-label">Stock negativo</div>
-            <div class="metric-value" id="metric-alertos-negativos-value">0</div>
+            <div class="metric-value" id="metric-alertas-negativos-value">0</div>
           </div>
 
           <div id="metric-alertas-cero" class="metric-card">
@@ -180,32 +177,33 @@
         </div>
 
         <!-- PANEL DE FILTROS -->
-        <div id="filtros-panel" class="panel">
-          <div class="filtro-row">
-            <select id="filtro-marca" class="filtro-input">
+        <div id="filtros-panel" class="filtros-panel">
+          <div class="filtros-row filtros-row-stack">
+            <select id="filtro-marca" class="filtro-select">
               <option value="">Marca</option>
             </select>
 
-            <select id="filtro-rubro" class="filtro-input">
+            <select id="filtro-rubro" class="filtro-select">
               <option value="">Rubro</option>
             </select>
           </div>
 
-          <div class="filtro-row">
+          <div class="filtros-row filtros-row-stack">
             <input id="filtro-talle-desde" type="number" class="filtro-input" placeholder="Talle desde" />
             <input id="filtro-talle-hasta" type="number" class="filtro-input" placeholder="Talle hasta" />
           </div>
 
-          <div class="filtro-row">
+          <div class="filtros-row filtros-row-stack">
             <input id="filtro-unidades-desde" type="number" class="filtro-input" placeholder="Unidades desde" />
             <input id="filtro-unidades-hasta" type="number" class="filtro-input" placeholder="Unidades hasta" />
           </div>
 
-          <div class="filtro-row">
+          <div class="filtros-row">
             <button id="btn-aplicar-filtros" class="btn-secondary">Aplicar filtros</button>
           </div>
         </div>
       </section>
+
       <!-- MAIN ROW -->
       <section class="main-row">
         <div class="results-card">
@@ -224,9 +222,9 @@
           <div id="results-status" class="results-status">Esperando consulta</div>
 
           <div id="results-container">
-            <div id="vista-tabla" class="vista-tabla"></div>
-            <div id="vista-tarjeta" class="vista-tarjeta"></div>
-            <div id="vista-articulo" class="vista-articulo"></div>
+            <div id="vista-tabla" class="vista vista-tabla"></div>
+            <div id="vista-tarjeta" class="vista vista-tarjeta active"></div>
+            <div id="vista-articulo" class="vista vista-articulo"></div>
           </div>
         </div>
 
@@ -255,19 +253,11 @@
         </aside>
       </section>
 
-      <!-- SCANNER OVERLAY -->
-      <div id="scanner-overlay" class="scanner-overlay">
-        <video id="scanner-video" autoplay playsinline></video>
-        <div id="focus-ring"></div>
-        <div id="scan-frame"></div>
-        <div id="scan-laser"></div>
-      </div>
-
       <!-- FUENTE DE DATOS -->
       <section class="fuente-datos-wrapper">
         <button id="fuente-datos-toggle" class="btn-secondary">Fuente de datos</button>
 
-        <div id="fuente-datos-panel" class="panel">
+        <div id="fuente-datos-panel" class="fuente-datos-panel">
           <div><strong>Archivo:</strong> <span id="fuente-archivo">—</span></div>
           <div><strong>Fecha:</strong> <span id="fuente-fecha">—</span></div>
           <div><strong>Marcas:</strong> <span id="fuente-marcas">—</span></div>
@@ -292,8 +282,17 @@
 
     </div>
   </div>
+
+  <!-- SCANNER OVERLAY -->
+  <div id="scanner-overlay" class="scanner-overlay hidden">
+    <video id="scanner-video" autoplay playsinline></video>
+    <div id="focus-ring"></div>
+    <div id="scan-frame"></div>
+    <div id="scan-laser"></div>
+  </div>
+
   <!-- PANEL ADMIN -->
-  <div id="admin-panel" class="panel">
+  <div id="admin-panel">
     <h2 class="admin-title">Panel administrador</h2>
 
     <div class="admin-list">
@@ -325,12 +324,12 @@
 
       <div class="admin-item">
         <div class="admin-item-label">Tamaño ORB (px)</div>
-        <input id="orb-size" type="range" min="80" max="200" class="admin-input" />
+        <input id="orb-size" type="range" min="80" max="200" class="admin-slider" />
       </div>
 
       <div class="admin-item">
         <div class="admin-item-label">Intensidad halo</div>
-        <input id="orb-halo" type="range" min="0" max="120" class="admin-input" />
+        <input id="orb-halo" type="range" min="0" max="120" class="admin-slider" />
       </div>
 
       <div class="admin-item">
@@ -363,9 +362,9 @@
   </div>
 
   <!-- MODAL DE AYUDA -->
-  <div id="help-modal" class="panel help-modal">
-    <div class="help-title">Ayuda rápida</div>
-    <div class="help-text">
+  <div id="help-modal" class="help-modal hidden">
+    <div class="help-modal-content">
+      <h2>Ayuda rápida</h2>
       <ul>
         <li>Escribí o escaneá un código, marca, rubro o talle.</li>
         <li>Usá el botón 🎤 si el modo dictado está activo.</li>
@@ -374,8 +373,8 @@
         <li>Click en métricas para entender el stock global.</li>
         <li>Atajos: ESC limpia, F2 scanner, F3 voz.</li>
       </ul>
+      <button id="help-close-btn" class="help-close-btn">Cerrar</button>
     </div>
-    <button id="help-close" class="help-close">Cerrar</button>
   </div>
 
   <!-- TOAST -->
