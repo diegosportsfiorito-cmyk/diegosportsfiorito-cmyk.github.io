@@ -72,22 +72,27 @@ function initUI(app) {
   const fuenteToggle = document.getElementById("fuente-datos-toggle");
   const fuentePanel = document.getElementById("fuente-datos-panel");
 
+  const logoutButton = document.getElementById("logout-button");
+
   // ============================================================
   // ESTADOS INICIALES
   // ============================================================
-  if (els.filtrosPanel) {
-    els.filtrosPanel.classList.add("hidden");
-    els.filtrosPanel.classList.remove("visible");
-  }
-  if (fuentePanel) {
-    fuentePanel.classList.add("hidden");
-    fuentePanel.classList.remove("visible");
-  }
-  if (helpModal) helpModal.classList.add("hidden");
-  if (scannerOverlay) {
-    scannerOverlay.classList.add("hidden");
-    scannerOverlay.style.display = "none";
-  }
+  if (els.filtrosPanel) els.filtrosPanel.classList.remove("open");
+  if (fuentePanel) fuentePanel.classList.remove("open");
+  if (helpModal) helpModal.classList.remove("open");
+  if (scannerOverlay) scannerOverlay.classList.remove("open");
+
+  // ============================================================
+  // LOGOUT
+  // ============================================================
+  logoutButton?.addEventListener("click", () => {
+    if (navigator.vibrate) navigator.vibrate(20);
+    app.auth.clear();
+    app.showToast("Sesión cerrada");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 400);
+  });
 
   // ============================================================
   // SCANNER SWITCH
@@ -243,8 +248,7 @@ function initUI(app) {
       const val = e.target.value.trim().toLowerCase();
 
       if (val === "admin") {
-        adminPanel.classList.remove("hidden");
-        adminPanel.classList.add("visible");
+        adminPanel.classList.add("open");
         e.target.value = "";
         if (autoList) autoList.innerHTML = "";
         app.showToast("Modo administrador activado");
@@ -282,6 +286,7 @@ function initUI(app) {
       autoList.innerHTML = "";
     }
   });
+
   // ============================================================
   // ORB
   // ============================================================
@@ -305,8 +310,7 @@ function initUI(app) {
     });
 
     orbCore.addEventListener("dblclick", () => {
-      adminPanel.classList.remove("hidden");
-      adminPanel.classList.add("visible");
+      adminPanel.classList.add("open");
       app.showToast("Modo administrador activado");
     });
   }
@@ -318,18 +322,8 @@ function initUI(app) {
 
   function setScannerOverlay(active) {
     if (!scannerOverlay) return;
-    const laser = document.getElementById("scan-laser");
-
-    if (active) {
-      scannerOverlay.classList.remove("hidden");
-      scannerOverlay.style.display = "block";
-      document.body.classList.add("scanner-active");
-      if (laser) laser.style.display = "none";
-    } else {
-      scannerOverlay.classList.add("hidden");
-      scannerOverlay.style.display = "none";
-      document.body.classList.remove("scanner-active");
-    }
+    if (active) scannerOverlay.classList.add("open");
+    else scannerOverlay.classList.remove("open");
   }
 
   function scannerCallback() {
@@ -406,9 +400,7 @@ function initUI(app) {
   // ============================================================
   btnFiltros?.addEventListener("click", () => {
     if (!els.filtrosPanel) return;
-    const visible = els.filtrosPanel.classList.contains("visible");
-    els.filtrosPanel.classList.toggle("visible", !visible);
-    els.filtrosPanel.classList.toggle("hidden", visible);
+    els.filtrosPanel.classList.toggle("open");
   });
 
   els.btnAplicarFiltros?.addEventListener("click", () => {
@@ -453,13 +445,11 @@ function initUI(app) {
 
     app.showToast("Configuración guardada");
 
-    adminPanel.classList.remove("visible");
-    adminPanel.classList.add("hidden");
+    adminPanel.classList.remove("open");
   });
 
   adminCerrar?.addEventListener("click", () => {
-    adminPanel.classList.remove("visible");
-    adminPanel.classList.add("hidden");
+    adminPanel.classList.remove("open");
   });
 
   // ============================================================
@@ -532,82 +522,99 @@ function initUI(app) {
   mCero?.addEventListener("click", filtrarSinStock);
   mVal?.addEventListener("click", ordenarPorValorizado);
   mUlt?.addEventListener("click", filtrarUltimaUnidad);
+  
+  // ============================================================
+  // ORDENAR POR VALORIZADO
+  // ============================================================
+  function ordenarPorValorizado() {
+    const items = [...app.state.items].sort(
+      (a, b) => Number(b.valorizado || 0) - Number(a.valorizado || 0)
+    );
+    app.renderResultados(items);
+    app.actualizarIndicadores(items);
+    app.showToast("Ordenado por valorizado");
+  }
+
+  mArt?.addEventListener("click", mostrarTodos);
+  mUni?.addEventListener("click", filtrarConStock);
+  mNeg?.addEventListener("click", filtrarNegativos);
+  mCero?.addEventListener("click", filtrarSinStock);
+  mVal?.addEventListener("click", ordenarPorValorizado);
+  mUlt?.addEventListener("click", filtrarUltimaUnidad);
+
   // ============================================================
   // MODO DÍA / NOCHE
   // ============================================================
-  function aplicarModoDark(on) {
-    document.body.classList.toggle("light-mode", on);
-    localStorage.setItem("theme", on ? "light" : "dark");
-  }
-
-  const savedTheme = localStorage.getItem("theme") || "dark";
-  aplicarModoDark(savedTheme === "light");
-  if (toggleDark) toggleDark.checked = savedTheme === "light";
-
   toggleDark?.addEventListener("change", () => {
-    aplicarModoDark(toggleDark.checked);
+    if (toggleDark.checked) {
+      document.body.classList.add("light-mode");
+      localStorage.setItem("modoDia", "on");
+    } else {
+      document.body.classList.remove("light-mode");
+      localStorage.setItem("modoDia", "off");
+    }
+
+    if (window.actualizarDashboard && app.state.items) {
+      actualizarDashboard(app.state.items);
+    }
   });
+
+  const savedModoDia = localStorage.getItem("modoDia");
+  if (savedModoDia === "on") {
+    toggleDark.checked = true;
+    document.body.classList.add("light-mode");
+  }
 
   // ============================================================
   // AYUDA
   // ============================================================
-  helpModal?.classList.add("hidden");
-
   helpButton?.addEventListener("click", () => {
-    helpModal.classList.remove("hidden");
+    helpModal.classList.add("open");
   });
 
   helpClose?.addEventListener("click", () => {
-    helpModal.classList.add("hidden");
-  });
-
-  helpModal?.addEventListener("click", (e) => {
-    if (e.target === helpModal) helpModal.classList.add("hidden");
+    helpModal.classList.remove("open");
   });
 
   // ============================================================
-  // FUENTE DE DATOS — TOGGLE
+  // FUENTE DE DATOS
   // ============================================================
   fuenteToggle?.addEventListener("click", () => {
-    if (!fuentePanel) return;
-    const visible = fuentePanel.classList.contains("visible");
-    fuentePanel.classList.toggle("visible", !visible);
-    fuentePanel.classList.toggle("hidden", visible);
+    fuentePanel.classList.toggle("open");
   });
 
   // ============================================================
-  // ATAJOS DE TECLADO
+  // ATALOS DE TECLADO
   // ============================================================
   document.addEventListener("keydown", (e) => {
-    const tag = (e.target && e.target.tagName) || "";
-    const isInput = ["INPUT", "TEXTAREA"].includes(tag);
-
-    // ESC limpia autocomplete o pantalla
     if (e.key === "Escape") {
-      if (autoList?.innerHTML.trim()) {
-        autoList.innerHTML = "";
-        return;
-      }
       app.limpiarPantalla();
-      return;
+      app.setOrbIdle?.();
     }
 
-    // F2 = Scanner interno
-    if (e.key === "F2" && !isInput) {
-      const btnScannerInterno1 = document.getElementById("btn-scanner-interno-1");
-      btnScannerInterno1?.click();
-      e.preventDefault();
-      return;
+    if (e.key === "F2") {
+      const modo = getScannerModo();
+      setScannerOverlay(true);
+      window.startScannerInterno1?.(scannerCallback, modo);
     }
 
-    // F3 = Dictado manual
-    if (e.key === "F3" && !isInput) {
-      micButton?.click();
-      e.preventDefault();
-      return;
+    if (e.key === "F3") {
+      startDictado();
     }
   });
-}
 
-// Exponer initUI
-window.initUI = initUI;
+  // ============================================================
+  // ACTUALIZAR INDICADORES Y DASHBOARD AL CARGAR
+  // ============================================================
+  if (app.state.items?.length) {
+    app.actualizarIndicadores(app.state.items);
+    if (window.actualizarDashboard) {
+      actualizarDashboard(app.state.items);
+    }
+  }
+
+  // ============================================================
+  // EXPONER FUNCIÓN GLOBAL
+  // ============================================================
+  window.initUI = initUI;
+}
