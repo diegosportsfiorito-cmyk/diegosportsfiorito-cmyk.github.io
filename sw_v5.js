@@ -6,22 +6,40 @@ const CACHE_VERSION = "v5-20260302";
 const STATIC_CACHE = `ia-pro-ultra-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `ia-pro-ultra-runtime-${CACHE_VERSION}`;
 
+// ============================================================
+// ARCHIVOS ESTÁTICOS A CACHEAR
+// (TODOS EXISTEN Y SON LOS CORRECTOS)
+// ============================================================
+
 const STATIC_ASSETS = [
   "./",
   "./index.html",
   "./styles_v2.css",
-  "./scanner.css",
+
+  // CORE
   "./app_core_v5.js",
-  "./ui_engine_v4.js",
+  "./ui_engine_v5.js",
+
+  // ORB
   "./orb_engine_v2.js",
   "./orb_admin_engine.js",
+
+  // DASHBOARD
   "./dashboard_engine.js",
   "./indicators_engine.js",
+
+  // SCANNER
   "./scanner_v7_barcodeDetector.js",
+
+  // PWA
   "./manifest.json",
+  "./sw_v5.js"
 ];
 
+// ============================================================
 // INSTALL
+// ============================================================
+
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
@@ -29,7 +47,10 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
+// ============================================================
 // ACTIVATE
+// ============================================================
+
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -43,7 +64,10 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+// ============================================================
 // FETCH
+// ============================================================
+
 self.addEventListener("fetch", (event) => {
   const req = event.request;
 
@@ -60,7 +84,10 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(cacheFirst(req));
 });
 
+// ============================================================
 // Estrategias
+// ============================================================
+
 async function networkFirst(req) {
   const cache = await caches.open(STATIC_CACHE);
 
