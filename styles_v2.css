@@ -1,15 +1,8 @@
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 1
-   VARIABLES + RESET + BASE + FONDO QUANTUM
-   HUD EXTREMO A2 + B3 + C1
-   ============================================================ */
-
-/* ============================================================
-   01 — VARIABLES GLOBALES
+   IA PRO ULTRA V6 — VARIABLES + RESET + BASE + FONDO QUANTUM
    ============================================================ */
 
 :root {
-  /* Paleta base */
   --bg-dark: #020617;
   --bg-dark-soft: #050814;
   --bg-light: #f5f5f7;
@@ -22,17 +15,13 @@
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
 
-  /* Glass / bordes / sombras */
   --card-bg: rgba(10, 16, 32, 0.96);
 
-  /* HUD EXTREMO A2 */
   --card-glass: rgba(15, 23, 42, 0.06);
 
-  /* Bordes azul eléctrico B3 */
   --border-soft: rgba(59, 130, 246, 0.45);
   --border-glass: rgba(59, 130, 246, 0.55);
 
-  /* Sombras profundas C1 */
   --shadow-soft: 0 22px 60px rgba(0, 0, 0, 0.85);
 
   --radius-lg: 20px;
@@ -42,7 +31,6 @@
   --transition-fast: 0.18s ease-out;
   --transition-med: 0.25s ease-out;
 
-  /* ORB ULTRA */
   --orb-color: #5fd4ff;
   --orb-color-dark: #3b82f6;
   --orb-halo-strength: 70;
@@ -51,7 +39,7 @@
 }
 
 /* ============================================================
-   02 — RESET
+   RESET
    ============================================================ */
 
 *,
@@ -62,27 +50,21 @@
   padding: 0;
 }
 
-html,
-body {
+html, body {
   height: 100%;
   background-color: #020617;
 }
 
-/* ============================================================
-   03 — BASE DEL DOCUMENTO
-   ============================================================ */
-
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
     "Segoe UI", sans-serif;
-
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
 /* ============================================================
-   04 — FONDO QUANTUM CIRCUIT
+   FONDO QUANTUM
    ============================================================ */
 
 body {
@@ -92,14 +74,13 @@ body {
     url("/img/bg-quantum-foreground.png") center center / cover no-repeat,
     radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%),
     #020617;
-
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
 }
 
 /* ============================================================
-   05 — MODO DÍA (ÚNICO MODO)
+   MODO DÍA
    ============================================================ */
 
 body.light-mode {
@@ -126,7 +107,7 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   06 — MOBILE PLASMA (FONDO TRANSPARENTE)
+   MOBILE PLASMA
    ============================================================ */
 
 @media (max-width: 600px) {
@@ -137,20 +118,20 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   ESTADOS INICIALES — SOLO PANEL HELP / ADMIN / FILTROS / FUENTE
+   SISTEMA DE PANELES .open
    ============================================================ */
 
-#help-modal,
-#admin-panel,
-#filtros-panel,
-#fuente-datos-panel {
+.panel {
   display: none;
 }
 
+.panel.open {
+  display: flex !important;
+  flex-direction: column;
+}
+
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 2
-   LAYOUT + HEADER
-   HUD EXTREMO A2 + B3 + C1
+   APP SHELL + CONTAINER
    ============================================================ */
 
 .app-shell {
@@ -164,14 +145,13 @@ body.light-mode .result-sub {
 .app-container {
   width: 100%;
   max-width: 1100px;
+  min-height: 100vh;
 
   background: rgba(2, 6, 23, 0.06);
   backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
   border-radius: 26px;
   border: 1px solid rgba(59, 130, 246, 0.55);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--shadow-soft);
 
   position: relative;
   overflow: hidden;
@@ -189,7 +169,7 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   07 — HEADER
+   HEADER
    ============================================================ */
 
 .app-header {
@@ -233,7 +213,7 @@ body.light-mode .result-sub {
 }
 
 /* ============================================================
-   08 — HEADER RIGHT
+   HEADER RIGHT
    ============================================================ */
 
 .header-right {
@@ -257,13 +237,16 @@ body.light-mode .result-sub {
   border-radius: 50%;
   background: var(--accent-danger);
   box-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
-  transition: background var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .connection-dot.online {
   background: var(--accent-success);
   box-shadow: 0 0 10px rgba(52, 211, 153, 0.9);
 }
+
+/* ============================================================
+   BOTÓN AYUDA
+   ============================================================ */
 
 .btn-help {
   width: 34px;
@@ -275,42 +258,57 @@ body.light-mode .result-sub {
   color: var(--text-main);
   font-size: 1rem;
   cursor: pointer;
-  transition: background var(--transition-fast), border-color var(--transition-fast),
-    transform var(--transition-fast), box-shadow var(--transition-fast);
+  transition: var(--transition-fast);
 }
 
 .btn-help:hover {
-  background: rgba(30, 64, 175, 0.65);
+  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
   border-color: rgba(129, 140, 248, 0.9);
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
 }
+
 /* ============================================================
-   09 — HEADER MOBILE
+   BOTÓN SALIR (⎋)
    ============================================================ */
 
-@media (max-width: 600px) {
-  .app-header {
-    align-items: flex-start;
-  }
+.btn-logout {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(59,130,246,0.45);
+  background: rgba(15,23,42,0.35);
+  backdrop-filter: blur(14px);
+  color: var(--text-main);
+  font-size: 1rem;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-fast);
+}
 
-  .header-right {
-    align-items: flex-end;
-  }
+.btn-logout:hover {
+  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
+  border-color: rgba(129,140,248,0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(15,23,42,0.95);
+}
 
-  .app-container {
-    padding: 12px;
-    border-radius: 18px;
-  }
+.btn-logout:hover::after {
+  content: "SALIR";
+  position: absolute;
+  top: -28px;
+  right: 0;
+  background: rgba(15,23,42,0.85);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  color: #e5e7eb;
+  border: 1px solid rgba(59,130,246,0.45);
+  white-space: nowrap;
 }
 
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 3
-   SEARCH + AUTOCOMPLETE + ACCIONES + VOZ + SWITCHES
-   ============================================================ */
-
-/* ============================================================
-   10 — SEARCH CARD
+   SEARCH CARD
    ============================================================ */
 
 .search-card {
@@ -322,59 +320,17 @@ body.light-mode .result-sub {
   flex-direction: column;
   gap: 14px;
   backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--shadow-soft);
 }
 
 .search-status {
-  margin-bottom: 6px;
   font-weight: bold;
   font-size: 14px;
-  text-align: left;
   color: #0ea5e9;
 }
 
-.search-status.orange { color: #f59e0b; }
-.search-status.green { color: #10b981; }
-.search-status.red { color: #ef4444; }
-.search-status.blue { color: #0ea5e9; }
-
-.search-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.search-input-wrapper {
-  flex: 1;
-  position: relative;
-}
-
-.search-input {
-  width: 100%;
-  padding: 10px 14px;
-  background: rgba(15, 23, 42, 0.18);
-  border: 1px solid rgba(59, 130, 246, 0.45);
-  border-radius: var(--radius-md);
-  color: var(--text-main);
-  font-size: 0.9rem;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
-    background var(--transition-fast);
-}
-
-.search-input::placeholder {
-  color: var(--text-muted);
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.6);
-  background: rgba(15, 23, 42, 0.95);
-}
-
 /* ============================================================
-   11 — AUTOCOMPLETE
+   AUTOCOMPLETE
    ============================================================ */
 
 .autocomplete-list {
@@ -382,16 +338,12 @@ body.light-mode .result-sub {
   top: 100%;
   left: 0;
   right: 0;
-
   background: rgba(15, 23, 42, 0.65);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-md);
-
   z-index: 9999;
   max-height: 220px;
   overflow-y: auto;
-
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(18px);
 }
 
@@ -403,531 +355,39 @@ body.light-mode .result-sub {
   border-bottom: 1px solid rgba(59, 130, 246, 0.25);
 }
 
-.autocomplete-list li:last-child {
-  border-bottom: none;
-}
-
 .autocomplete-list li:hover {
   background: rgba(79, 140, 255, 0.35);
 }
 
 /* ============================================================
-   12 — ACCIONES DE BÚSQUEDA
+   RESULTADOS
    ============================================================ */
 
-.search-actions-row {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.orb-action-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(14px);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 1rem;
-  color: var(--text-main);
-  cursor: pointer;
-
-  transition: background var(--transition-fast), border-color var(--transition-fast),
-    transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.orb-action-btn:hover {
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
-}
-
-.orb-action-btn.stop {
-  background: #ffffff !important;
-  color: #c62828 !important;
-  border: 1px solid #c62828 !important;
-}
-
-/* ============================================================
-   13 — VOZ
-   ============================================================ */
-
-.voice-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.mic-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 1.1rem;
-  color: var(--text-main);
-  cursor: pointer;
-
-  transition: background var(--transition-fast), border-color var(--transition-fast),
-    transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.mic-btn:hover {
-  background: radial-gradient(circle at 30% 20%, #3b82f6, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.95);
-}
-
-.voice-status {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.voice-status.listening {
-  color: #22c55e;
-}
-
-/* ============================================================
-   14 — SWITCHES
-   ============================================================ */
-
-.orb-mode-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 42px;
-  height: 22px;
-}
-
-.switch.small {
-  width: 38px;
-  height: 20px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: #4b5563;
-  transition: 0.3s;
-  border-radius: 22px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.switch.small .slider:before {
-  height: 14px;
-  width: 14px;
-  bottom: 3px;
-}
-
-input:checked + .slider {
-  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
-}
-
-input:checked + .slider:before {
-  transform: translateX(20px);
-}
-
-/* ============================================================
-   15 — FILTROS SUPERIORES
-   ============================================================ */
-
-.search-filters-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
-}
-
-.solo-stock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.btn-secondary {
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(14px);
-
-  color: var(--text-main);
-  font-size: 0.78rem;
-  cursor: pointer;
-
-  transition: background var(--transition-fast), border-color var(--transition-fast),
-    transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.btn-secondary:hover {
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
-}
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 5A
-   MÉTRICAS SUPERIORES (2 POR FILA, 50% ANCHO)
-   ============================================================ */
-
-.metrics-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.metric-card {
-  width: calc(50% - 5px); /* 2 por fila */
-  background: rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-md);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
-  padding: 6px 8px; /* más bajo */
-  text-align: center;
-  cursor: pointer;
-
-  transition: transform var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast);
-
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
-}
-
-.metric-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.95);
-  background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.25), rgba(15, 23, 42, 0.95));
-}
-
-.metric-label {
-  font-size: 0.65rem;
-  color: var(--text-muted);
-}
-
-.metric-value {
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-top: 2px;
-}
-
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 5B
-   RESULTADOS (CARD PRINCIPAL)
-   ============================================================ */
-
-.main-row {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-/* Resultados SIEMPRE visibles por defecto */
 .results-card {
   background: rgba(15, 23, 42, 0.06);
   border: 1px solid rgba(59, 130, 246, 0.55);
   border-radius: var(--radius-lg);
   padding: 16px;
-
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
   max-height: 420px;
   overflow-y: scroll;
-
   backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--shadow-soft);
 }
 
-.results-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.results-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.results-status {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-#results-container {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+@media (max-width: 600px) {
+  .results-card {
+    max-height: none;
+    overflow-y: visible;
+  }
 }
 
 /* ============================================================
-   CONTENEDOR DE VISTAS — SCROLL TOTAL
+   DASHBOARD
    ============================================================ */
-
-.results-views-wrapper {
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: auto;
-  white-space: nowrap;
-  scroll-behavior: smooth;
-  display: flex;
-  gap: 20px;
-}
-
-.vista-tabla,
-.vista-tarjeta,
-.vista-articulo {
-  display: inline-block;
-  vertical-align: top;
-  white-space: normal;
-  width: 100%;
-  max-width: 100%;
-}
-
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 5C
-   TARJETAS HOLOGRAMA (RESULT-ITEM)
-   ============================================================ */
-
-.result-item {
-  background: linear-gradient(
-    135deg,
-    rgba(148, 163, 184, 0.05),
-    rgba(15, 23, 42, 0.05)
-  );
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-md);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-
-  padding: 12px;
-  transition: border-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast);
-
-  position: relative;
-  overflow: hidden;
-
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
-}
-
-.result-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition-fast);
-}
-
-.result-item:hover::before {
-  opacity: 1;
-}
-
-.result-item:hover {
-  border-color: var(--accent);
-  transform: translateY(-1px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.95);
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.18),
-    rgba(15, 23, 42, 0.98)
-  );
-}
-
-.result-title {
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.result-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-.result-precio {
-  margin-top: 6px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.result-talles {
-  margin-top: 6px;
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 5D
-   VISTA TABLA
-   ============================================================ */
-
-.results-view-toggle {
-  display: flex;
-  gap: 6px;
-}
-
-.view-btn {
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  border-radius: var(--radius-pill);
-
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.18);
-  backdrop-filter: blur(14px);
-
-  color: var(--text-muted);
-  cursor: pointer;
-
-  transition: background var(--transition-fast),
-    color var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.view-btn.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.7);
-}
-
-.tabla-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
-  scrollbar-width: thin;
-  position: relative;
-}
-
-.tabla-wrapper::-webkit-scrollbar {
-  height: 6px;
-}
-
-.tabla-wrapper::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tabla-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.35);
-  border-radius: 6px;
-}
-
-.tabla-wrapper::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.55);
-}
-
-.tabla-wrapper::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40px;
-  height: 100%;
-  pointer-events: none;
-  background: linear-gradient(to left, rgba(0,0,0,0.4), transparent);
-}
-
-.tabla-resultados {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 4px 2px;
-  min-width: 900px;
-}
-
-.tabla-resultados th,
-.tabla-resultados td {
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-radius: 6px;
-  text-align: left;
-  font-size: 0.8rem;
-}
-
-.tabla-resultados th {
-  color: var(--text-muted);
-}
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 6A
-   DASHBOARD (CARDS + GRID + ESTADÍSTICAS)
-   ============================================================ */
-
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 10px;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 14px;
-}
 
 .dashboard-card {
   background: rgba(15, 23, 42, 0.06);
@@ -938,273 +398,91 @@ input:checked + .slider:before {
   flex-direction: column;
   gap: 10px;
   backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-  transition: transform var(--transition-fast),
-    border-color var(--transition-fast),
-    box-shadow var(--transition-fast),
-    background var(--transition-fast);
+  box-shadow: var(--shadow-soft);
+  max-height: 420px;
+  overflow: hidden;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.95);
-  background: radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.18), rgba(15, 23, 42, 0.95));
-}
-
-.dashboard-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-.dashboard-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.dashboard-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dashboard-stat-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.dashboard-stat-value {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.dashboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.dashboard-list-item {
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  font-size: 0.78rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.dashboard-list-item:hover {
-  background: rgba(59, 130, 246, 0.18);
-  border-color: var(--accent);
-  transform: translateY(-1px);
+#chart-canvas {
+  max-height: 300px !important;
 }
 
 /* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 6B
-   DASHBOARD SECUNDARIO + WIDGETS
+   SCANNER OVERLAY
    ============================================================ */
 
-.dashboard-panel {
-  background: rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-}
-
-.widget-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.widget {
-  flex: 1;
-  min-width: 140px;
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  border-radius: var(--radius-md);
-  padding: 10px;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: transform var(--transition-fast),
-    border-color var(--transition-fast),
-    background var(--transition-fast);
-}
-
-.widget:hover {
-  transform: translateY(-1px);
-  border-color: var(--accent);
-  background: rgba(59, 130, 246, 0.18);
-}
-
-.widget-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.widget-value {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 7A
-   PANEL ADMIN
-   ============================================================ */
-
-.admin-panel {
+#scanner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: none;
-  flex-direction: column;
-  gap: 16px;
-  margin-top: 14px;
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-}
-
-.admin-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.admin-sub {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.admin-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.admin-item {
-  padding: 12px;
-  border-radius: var(--radius-md);
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.admin-item:hover {
-  background: rgba(59, 130, 246, 0.18);
-  border-color: var(--accent);
-  transform: translateY(-1px);
-}
-
-.admin-item-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.admin-item-value {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.admin-item.ok { border-color: #22c55e; }
-.admin-item.warn { border-color: #f59e0b; }
-.admin-item.error { border-color: #ef4444; }
-
-/* ============================================================
-   IA PRO ULTRA V6 — MÓDULO 8A
-   SCANNER + HELP MODAL + FILTROS
-   ============================================================ */
-
-.scanner-card {
-  background: rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-}
-
-.scanner-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.scanner-sub {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.scanner-preview {
-  width: 100%;
-  height: 260px;
-  border-radius: var(--radius-md);
-  background: rgba(15, 23, 42, 0.12);
-  border: 1px solid rgba(59, 130, 246, 0.35);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  display: flex;
-  align-items: center;
   justify-content: center;
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  align-items: center;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  z-index: 99999;
 }
 
-.scanner-btn {
+#scanner-overlay.open {
+  display: flex !important;
+}
+
+#scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanner-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 100000;
+}
+
+.scanner-btn,
+.scanner-btn-primary,
+.scanner-btn-danger {
   padding: 10px 14px;
   border-radius: var(--radius-pill);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid rgba(59,130,246,0.55);
+  background: rgba(15,23,42,0.35);
   backdrop-filter: blur(14px);
   color: var(--text-main);
-  font-size: 0.85rem;
   cursor: pointer;
-  transition: background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: var(--transition-fast);
 }
 
-.scanner-btn:hover {
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
+.scanner-btn-danger {
+  border-color: #ff4f6a;
+  color: #ff4f6a;
+}
+
+.scanner-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(15,23,42,0.85);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(59,130,246,0.45);
+  display: none;
+}
+
+.scanner-counter.open {
+  display: block;
 }
 
 /* ============================================================
-   HELP MODAL (SIN OVERLAY OSCURO)
+   HELP MODAL
    ============================================================ */
 
-#help-modal {
+.help-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1219,89 +497,36 @@ input:checked + .slider:before {
   flex-direction: column;
   gap: 14px;
   backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: var(--shadow-soft);
   z-index: 99999;
 }
 
-.help-title {
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.help-text {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-.help-close {
-  padding: 8px 12px;
-  border-radius: var(--radius-pill);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(14px);
-  color: var(--text-main);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast),
-    box-shadow var(--transition-fast);
-}
-
-.help-close:hover {
-  background: radial-gradient(circle at 30% 20%, #1d4ed8, #020617);
-  border-color: rgba(129, 140, 248, 0.9);
-  transform: translateY(-1px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.95);
+.help-modal.open {
+  display: flex !important;
 }
 
 /* ============================================================
-   FILTROS PANEL
+   TOAST
    ============================================================ */
 
-#filtros-panel {
-  background: rgba(15, 23, 42, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.55);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  display: none;
-  flex-direction: column;
-  gap: 12px;
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85);
-}
-
-.filtro-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.filtro-label {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-.filtro-input {
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  background: rgba(15, 23, 42, 0.18);
-  border: 1px solid rgba(59, 130, 246, 0.45);
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,0.85);
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(59,130,246,0.45);
   color: var(--text-main);
   font-size: 0.85rem;
-  transition: border-color var(--transition-fast),
-    background var(--transition-fast),
-    box-shadow var(--transition-fast);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 999999;
 }
 
-.filtro-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  background: rgba(15, 23, 42, 0.95);
-  box-shadow: 0 0 0 1px rgba(79, 140, 255, 0.6);
+.toast.show {
+  opacity: 1;
 }
 
 /* ============================================================
@@ -1310,63 +535,15 @@ input:checked + .slider:before {
 
 .app-footer {
   margin-top: 20px;
-  padding: 12px;
-  text-align: center;
-  font-size: 0.75rem;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
   color: var(--text-muted);
 }
 
-/* ============================================================
-   RESPONSIVE GENERAL
-   ============================================================ */
-
-@media (max-width: 900px) {
-  .main-row {
-    flex-direction: column;
-  }
-
-  .detalle-card {
-    width: 100%;
-  }
-}
-
-@media (max-width: 600px) {
-  .metrics-row {
-    flex-wrap: wrap;
-  }
-
-  .metric-card {
-    width: calc(50% - 5px);
-  }
-
-  .search-actions-row {
-    flex-wrap: wrap;
-  }
-
-  .widget-row {
-    flex-direction: column;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ============================================================
-   OVERRIDES HUD EXTREMO
-   ============================================================ */
-
-.hud-glow {
-  border: 1px solid rgba(59, 130, 246, 0.55) !important;
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.85) !important;
-  backdrop-filter: blur(22px) !important;
-}
-
-.hud-glass {
-  background: rgba(15, 23, 42, 0.06) !important;
-  backdrop-filter: blur(22px) !important;
-}
-
-.hud-border {
-  border: 1px solid rgba(59, 130, 246, 0.55) !important;
+.version-badge {
+  padding: 4px 8px;
+  background: rgba(15,23,42,0.35);
+  border-radius: 6px;
+  border: 1px solid rgba(59,130,246,0.45);
 }
